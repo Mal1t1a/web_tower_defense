@@ -1,7 +1,7 @@
 import { Enemy } from './Enemy.js';
 import { path } from './Path.js';
 import { EventEmitter } from './eventEmitter.js';
-import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI } from './ui.js';
+import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton } from './ui.js';
 import { CircleParticle, SquareParticle, TextParticle } from './particles/index.js';
 
 export const towers = [];
@@ -83,7 +83,7 @@ export function addEnemy(deltaTime)
 			if (waveNumber % 5 === 0 && enemiesSpawned >= enemiesPerWave-1)
 			{
 				healthMultiplier *= 2;
-				enemy.color = {r: 255, g: 255, b: 0};
+				enemy.color = { r: 255, g: 255, b: 0, a: 1 };
 			}
 			enemy.health *= healthMultiplier;
 			enemy.maxHealth *= healthMultiplier;
@@ -112,12 +112,14 @@ export function increaseCurrency(amount)
 {
 	currency += amount;
 	updateCurrency(currency);
+	checkShowUpgradeButton();
 };
 
 export function decreaseCurrency(amount)
 {
 	currency -= amount;
 	updateCurrency(currency);
+	checkShowUpgradeButton();
 };
 
 export function increaseLives(amount)
@@ -172,6 +174,7 @@ export function resetGame()
 	updateLives(lives);
 	setMousePosition(null, null);
 	setSelectedPosition(null, null);
+	hideUpgradeButton();
 	setInactiveWaveUI();
 };
 
@@ -190,4 +193,38 @@ export function setSelectedPosition(x, y)
 export function setShowPathIndicator(value)
 {
 	showPathIndicator = value;
+};
+
+export function checkShowUpgradeButton()
+{
+	if (selectedX === null || selectedY === null)
+	{
+		return;
+	}
+
+	const tower = towers.find(tower => tower.x === selectedX && tower.y === selectedY);
+	if (tower && currency >= tower.upgradeCost)
+	{
+		showUpgradeButton();
+	}
+	else
+	{
+		hideUpgradeButton();
+	}
+};
+
+export function upgradeTower()
+{
+	if (selectedX === null || selectedY === null)
+	{
+		return;
+	}
+
+	const tower = towers.find(tower => tower.x === selectedX && tower.y === selectedY);
+	if (tower && currency >= tower.upgradeCost)
+	{
+		let cost = tower.upgradeCost;
+		tower.upgrade();
+		decreaseCurrency(cost);
+	}
 };

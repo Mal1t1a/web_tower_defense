@@ -1,7 +1,7 @@
 import { towers, currency, decreaseCurrency, startWave, setMousePosition, setSelectedPosition, mouseX, mouseY, selectedX, selectedY } from './gameState.js';
 import { path } from './Path.js';
-import { showBuildMenu, hideBuildMenu } from './ui.js';
-import { ArrowTower, CannonTower, IceTower, FireTower, LightningTower } from './towers/index.js';
+import { showBuildMenu, hideBuildMenu, hideUpgradeButton, showUpgradeButton } from './ui.js';
+import { ArrowTower, CannonTower, IceTower, FireTower, LightningTower, SniperTower } from './towers/index.js';
 
 
 export function isOnPath(x, y)
@@ -33,14 +33,7 @@ export function isOnPath(x, y)
 
 export function isOccupied(x, y)
 {
-	for (const tower of towers)
-	{
-		if (tower.x === x && tower.y === y)
-		{
-			return true;
-		}
-	}
-	return false;
+	return towers.some(tower => tower.x === x && tower.y === y);
 }
 
 export function handleCanvasClick(event, canvas)
@@ -57,20 +50,36 @@ export function handleCanvasClick(event, canvas)
 
 	if (x != selectedX || y != selectedY)
 	{
-		setSelectedPosition(x, y);
 		if (isOnPath(x, y))
 		{
 			hideBuildMenu();
+			hideUpgradeButton();
+		}
+		else if (isOccupied(x, y))
+		{
+			hideBuildMenu();
+			const tower = towers.find(tower => tower.x === x && tower.y === y);
+			if (currency >= tower.upgradeCost)
+			{
+				showUpgradeButton();
+			}
+			else
+			{
+				hideUpgradeButton();
+			}
 		}
 		else
 		{
 			showBuildMenu();
+			hideUpgradeButton();
 		}
+		setSelectedPosition(x, y);
 	}
 	else
 	{
 		setSelectedPosition(null, null);
 		hideBuildMenu();
+		hideUpgradeButton();
 	}
 }
 
@@ -90,6 +99,11 @@ export function handleCanvasMouseMove(event, canvas)
 
 export function handleBuildTowerClick(type)
 {
+	if (selectedX === null || selectedY === null)
+	{
+		return;
+	}
+
 	let tower = null;
 	switch (type)
 	{
@@ -108,6 +122,9 @@ export function handleBuildTowerClick(type)
 		case 'lightning':
 			tower = new LightningTower(selectedX, selectedY);
 			break;
+		case 'sniper':
+			tower = new SniperTower(selectedX, selectedY);
+			break;
 		default:
 			break;
 	}
@@ -117,7 +134,15 @@ export function handleBuildTowerClick(type)
 		towers.push(tower);
 		decreaseCurrency(tower.cost);
 		hideBuildMenu();
+		if (currency >= tower.upgradeCost)
+		{
+			showUpgradeButton();
+		}
+		else
+		{
+			hideUpgradeButton();
+		}
 	}
 
-	setSelectedPosition(null, null);
+	// setSelectedPosition(null, null);
 };

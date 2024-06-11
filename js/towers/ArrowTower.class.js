@@ -7,9 +7,11 @@ export class ArrowTower extends Tower
 	{
 		super(x, y, 'arrow');
 		this.range = 120;
-		this.color = 'green';
+		this.color = { r: 0, g: 255, b: 0, a: 1 }; //green
 		this.fireRate = 2;
 		this.cost = 15;
+		this.upgradeCost = this.cost * 2;
+		this.damage = 1;
 	}
 
 	createProjectile(x, y, target)

@@ -7,10 +7,11 @@ export class FireTower extends Tower
 	{
 		super(x, y, 'fire');
 		this.range = 100;
-		this.color = 'red';
-		this.damage = 1;
+		this.color = { r: 255, g: 0, b: 0, a: 1 }; //red
+		this.damage = 1.5;
 		this.fireRate = 5;
 		this.cost = 75;
+		this.upgradeCost = this.cost * 2;
 	}
 
 	createProjectile(x, y, target)

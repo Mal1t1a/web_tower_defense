@@ -15,17 +15,29 @@ export class Tower extends EventEmitter
 		this.y = y;
 		this.type = type;
 		this.range = 0;
-		this.color = 'gray';
+		this.color = { r: 128, g: 128, b: 128, a: 1 };
 		this.projectiles = [];
 		this.fireRate = 1; //shots per second
 		this.fireCooldown  = 0;
 		this.damage = 1;
+		this.level = 1;
+		this.cost = 1;
+		this.upgradeCost = this.cost * 2;
 	}
 
 	draw(ctx)
 	{
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
+
+		//draw level
+		ctx.fillStyle = 'black';
+		ctx.font = '16px Arial';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText(this.level, this.x, this.y + 2);
+
+		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 	}
 
 	shoot(enemies, deltaTime)
@@ -47,6 +59,7 @@ export class Tower extends EventEmitter
 				{
 					var projectile = this.createProjectile(this.x, this.y, enemy);
 					projectile.color = this.color;
+					projectile.damage = this.damage;
 					this.projectiles.push(projectile);
 					this.emit('shoot', projectile);
 					this.fireCooldown = 1 / this.fireRate;
@@ -71,6 +84,15 @@ export class Tower extends EventEmitter
 			}
 			return !projectile.hitTarget; // Remove projectile if it hit the target
 		});
+	}
+
+	upgrade()
+	{
+		this.level++;
+		this.damage *= 1.5;
+		this.range *= 1.1;
+		this.fireRate *= 1.1;
+		this.upgradeCost *= 2;
 	}
 
 	createProjectile(x, y, target)

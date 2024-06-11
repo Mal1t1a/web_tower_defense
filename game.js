@@ -117,9 +117,13 @@ function renderGame()
 		{
 			drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
 		}
-		else if (isOccupied(selectedX, selectedY) || isOnPath(selectedX, selectedY))
+		else if (isOnPath(selectedX, selectedY))
 		{
 			drawGhostedTower(selectedX, selectedY, 'rgba(255, 0, 0, 0.5)');
+		}
+		else if (isOccupied(selectedX, selectedY))
+		{
+			drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
 		}
 	}
 

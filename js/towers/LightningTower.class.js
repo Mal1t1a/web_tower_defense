@@ -7,10 +7,11 @@ export class LightningTower extends Tower
 	{
 		super(x, y, 'lightning');
 		this.range = 200;
-		this.color = 'yellow';
+		this.color = { r: 255, g: 255, b: 0, a: 1 }; //yellow
 		this.damage = 1;
 		this.fireRate = 10;
 		this.cost = 150;
+		this.upgradeCost = this.cost * 2;
 	}
 
 	createProjectile(x, y, target)

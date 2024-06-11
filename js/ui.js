@@ -1,4 +1,4 @@
-import { resetGame, startWave, currency, waveNumber, setShowPathIndicator } from "./gameState.js";
+import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower } from "./gameState.js";
 import { handleBuildTowerClick } from "./eventHandlers.js";
 
 export const canvas = document.getElementById('gameCanvas');
@@ -7,27 +7,33 @@ export const txtScore = document.getElementById('txtScore');
 export const txtWave = document.getElementById('txtWave');
 export const txtLives = document.getElementById('txtLives');
 export const txtCurrency = document.getElementById('txtCurrency');
+export const waveStart = document.getElementById('waveStart');
+export const waveClear = document.getElementById('waveClear');
+
 export const btnStartWave = document.getElementById('btnStartWave');
 export const btnResetGame = document.getElementById('btnResetGame');
+export const btnUpgradeTower = document.getElementById('btnUpgradeTower');
+
 export const buildMenu = document.getElementById('buildMenu');
 export const btnBuildArrowTower = document.getElementById('btnBuildArrowTower');
 export const btnBuildCannonTower = document.getElementById('btnBuildCannonTower');
 export const btnBuildIceTower = document.getElementById('btnBuildIceTower');
 export const btnBuildFireTower = document.getElementById('btnBuildFireTower');
 export const btnBuildLightningTower = document.getElementById('btnBuildLightningTower');
-export const waveStart = document.getElementById('waveStart');
-export const waveClear = document.getElementById('waveClear');
+export const btnBuildSniperTower = document.getElementById('btnBuildSniperTower');
 
 canvas.width = 800;
 canvas.height = 600;
 
 btnStartWave.addEventListener('click', startWave);
 btnResetGame.addEventListener('click', resetGame);
+btnUpgradeTower.addEventListener('click', upgradeTower);
 btnBuildArrowTower.addEventListener('click', () => handleBuildTowerClick('arrow'));
 btnBuildCannonTower.addEventListener('click', () => handleBuildTowerClick('cannon'));
 btnBuildIceTower.addEventListener('click', () => handleBuildTowerClick('ice'));
 btnBuildFireTower.addEventListener('click', () => handleBuildTowerClick('fire'));
 btnBuildLightningTower.addEventListener('click', () => handleBuildTowerClick('lightning'));
+btnBuildSniperTower.addEventListener('click', () => handleBuildTowerClick('sniper'));
 
 export function updateScore(score)
 {
@@ -115,4 +121,14 @@ export function showBuildMenu()
 export function hideBuildMenu()
 {
 	buildMenu.classList.remove('active');
+};
+
+export function showUpgradeButton()
+{
+	btnUpgradeTower.classList.remove('inactive');
+};
+
+export function hideUpgradeButton()
+{
+	btnUpgradeTower.classList.add('inactive');
 };

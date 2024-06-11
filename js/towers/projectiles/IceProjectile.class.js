@@ -2,12 +2,12 @@ import { Projectile } from './Projectile.class.js';
 
 export class IceProjectile extends Projectile
 {
-	constructor(x, y, target)
+	constructor(x, y, target, slowAmount = 0.5, slowDuration = 1000)
 	{
 		super(x, y, target);
-		this.color = 'cyan';
-		this.slowAmount = 0.5; // Reduce the enemy's speed by 50%
-		this.slowDuration = 1000; // Slow effect lasts for 1 second
+		this.color = { r: 0, g: 255, b: 255, a: 1 }; //cyan
+		this.slowAmount = slowAmount; // Reduce the enemy's speed by 50%
+		this.slowDuration = slowDuration; // Slow effect lasts for 1 second
 	}
 
 	move(deltaTime)
@@ -54,7 +54,7 @@ export class IceProjectile extends Projectile
 
 	draw(ctx)
 	{
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
 		ctx.fill();

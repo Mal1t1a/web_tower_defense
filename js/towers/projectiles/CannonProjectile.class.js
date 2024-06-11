@@ -5,7 +5,7 @@ export class CannonProjectile extends Projectile
 	constructor(x, y, target)
 	{
 		super(x, y, target);
-		this.color = 'orange';
+		this.color = { r: 255, g: 165, b: 0, a: 1 }; //orange
 		this.explosionRadius = 40;
 		this.explosionSplash = 0.5;
 	}
@@ -54,7 +54,7 @@ export class CannonProjectile extends Projectile
 
 	draw(ctx)
 	{
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
 		ctx.fill();

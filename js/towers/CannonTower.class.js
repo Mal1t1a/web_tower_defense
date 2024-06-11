@@ -7,10 +7,11 @@ export class CannonTower extends Tower
 	{
 		super(x, y, 'cannon');
 		this.range = 100;
-		this.color = 'orange';
-		this.damage = 2;
+		this.color = { r: 255, g: 165, b: 0, a: 1 }; //orange
 		this.fireRate = 1;
 		this.cost = 30;
+		this.upgradeCost = this.cost * 2;
+		this.damage = 3;
 	}
 
 	createProjectile(x, y, target)

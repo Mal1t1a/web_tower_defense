@@ -1,12 +1,12 @@
 export class Projectile
 {
-	constructor(x, y, target)
+	constructor(x, y, target, color)
 	{
 		this.x = x;
 		this.y = y;
 		this.target = target;
 		this.speed = 400;
-		this.color = 'yellow';
+		this.color = color;
 		this.damage = 1;
 		this.hitTarget = false;
 	}
@@ -40,7 +40,7 @@ export class Projectile
 
 	draw(ctx)
 	{
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
 		ctx.fill();
