@@ -6,8 +6,11 @@ This was just a random project I was working on while I was sick.
 
 ### Todos:
 - More Towers
+- More Enemies
 - Splash Damage
 - Balancing
 - Sounds
 - Music
 - More VFX
+- Sprites
+- Levels with different paths
