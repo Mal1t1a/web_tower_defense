@@ -1,0 +1,328 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body
+{
+	margin: 0;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	height: 100dvh;
+	width: 100dvw;
+	background-color: #222;
+	color: #fff;
+	flex-direction: column;
+	
+	user-select: none;
+}
+
+#gameUI
+{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+}
+
+#stats
+{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	min-width: 100px;
+}
+
+#controls
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	height: 150px;
+}
+
+button
+{
+	padding: 10px;
+	background-color: #333;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+	width: 150px;
+}
+
+button:hover
+{
+	background-color: #444;
+}
+
+button.inactive
+{
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+#gameContainer
+{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+
+	position: relative;
+	max-width: 100dvw;
+	max-height: 100dvh;
+
+	width: 100%;
+	height: 100%;
+	background-color: #222;
+	overflow: auto;
+}
+
+#gameCanvas
+{
+	/* width: 100%;
+	height: 100%; */
+	width: 800px;
+	height: 600px;
+}
+
+#buildMenu
+{
+	pointer-events: none;
+	transition: all 0.25s ease;
+	opacity: 0.5;
+	cursor: not-allowed;
+
+	display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#buildMenu.active
+{
+	pointer-events: all;
+	opacity: 1;
+}
+
+#waveStart.inactive, #waveClear.inactive
+{
+	display: none;
+}
+
+#waveStart, #waveClear
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff21;
+    padding: 0px;
+    z-index: 2;
+    width: 100%;
+	height: 0rem;
+	overflow: hidden;
+	
+	animation-name: grow, shrink;
+	animation-duration: 1s, 1s;
+	animation-delay: 0s, 2.5s;
+	animation-timing-function: ease, ease;
+	animation-fill-mode: forwards, forwards;
+}
+
+.container
+{
+	position: relative;
+}
+
+#waveStart h1
+{
+	position: absolute;
+	width: 20rem;
+	font-size: 4rem;
+	margin: 0;
+	left: -100%;
+    transform: translateX(-50%);
+	animation-name: slideFromLeft, lilSlideToRight, slideToRight;
+	animation-duration: 1s, 1s, 1s;
+	animation-delay: 0s, 1s, 2s;
+	animation-timing-function: ease-out, linear, ease;
+	animation-fill-mode: forwards, forwards, forwards;
+}
+
+#waveClear h1
+{
+	position: absolute;
+	width: 25rem;
+	font-size: 4rem;
+	margin: 0;
+	left: -100%;
+    transform: translateX(-50%);
+	animation-name: slideFromLeft, lilSlideToRight, slideToRight;
+	animation-duration: 1s, 1s, 1s;
+	animation-delay: 0s, 1s, 2s;
+	animation-timing-function: ease-out, linear, ease;
+	animation-fill-mode: forwards, forwards, forwards;
+}
+
+#waveStart .underline
+{
+	position: absolute;
+	width: 20rem;
+	height: 5px;
+	background-color: #fff;
+	right: -100%;
+	top: 4rem;
+	transform: translateX(50%);
+	animation-name: slideFromRight, lilSlideToLeft, slideToLeft;
+	animation-duration: 1s, 1s, 1s;
+	animation-delay: 0s, 1s, 2s;
+	animation-timing-function: ease-out, linear, ease;
+	animation-fill-mode: forwards, forwards, forwards;
+}
+
+#waveClear .underline
+{
+	position: absolute;
+	width: 20rem;
+	height: 5px;
+	background-color: #fff;
+	right: -100%;
+	top: 4rem;
+	transform: translateX(50%);
+	animation-name: slideFromRight, lilSlideToLeft, slideToLeft;
+	animation-duration: 1s, 1s, 1s;
+	animation-delay: 0s, 1s, 2s;
+	animation-timing-function: ease-out, linear, ease;
+	animation-fill-mode: forwards, forwards, forwards;
+}
+
+
+@keyframes grow
+{
+	0%
+	{
+		padding: 0px;
+		height: 0rem;
+	}
+	100%
+	{
+		padding: 20px;
+		height: 8rem;
+	}
+}
+
+@keyframes shrink
+{
+	0%
+	{
+		padding: 20px;
+		height: 8rem;
+	}
+	100%
+	{
+		padding: 0px;
+		height: 0rem;
+	}
+
+}
+
+@keyframes slideFromLeft
+{
+	0%
+	{
+		left: -100%;
+	}
+
+	100%
+	{
+		left: 45%;
+	}
+}
+
+@keyframes lilSlideToRight
+{
+	0%
+	{
+		left: 45%;
+	}
+
+	100%
+	{
+		left: 55%;
+	}
+}
+
+@keyframes slideToRight
+{
+	0%
+	{
+		left: 55%;
+	}
+
+	100%
+	{
+		left: calc(100% + 20rem);
+	}
+}
+
+@keyframes slideFromRight
+{
+	0%
+	{
+		right: -100%;
+	}
+
+	100%
+	{
+		right: 45%;
+	}
+}
+
+@keyframes lilSlideToLeft
+{
+	0%
+	{
+		right: 45%;
+	}
+
+	100%
+	{
+		right: 55%;
+	}
+}
+
+@keyframes slideToLeft
+{
+	0%
+	{
+		right: 55%;
+	}
+
+	100%
+	{
+		right: calc(100% + 20rem);
+	}
+}
+
+@media screen and (max-width: 800px)
+{
+	#controls button
+	{
+		width: 100px;
+	}
+
+	#buildMenu
+	{
+		gap: 0px;
+	}
+}

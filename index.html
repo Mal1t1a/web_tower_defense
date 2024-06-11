@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Tower Defense Game</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+
+	<body>
+		<div id="waveStart" class="inactive">
+			<div class="container">
+				<h1>Wave Start</h1>
+				<div class="underline"></div>
+			</div>
+		</div>
+		<div id="waveClear" class="inactive">
+			<div class="container">
+				<h1>Wave Clear</h1>
+				<div class="underline"></div>
+			</div>
+		</div>
+		<div id="gameUI">
+			<section id="stats">
+				<span id="txtScore">Score: {score}</span>
+				<span id="txtWave">Wave: {wave}</span>
+				<span id="txtLives">Lives: {lives}</span>
+				<span id="txtCurrency">Currency: {Currency}</span>
+			</section>
+			<section id="buildMenu">
+				<button id="btnBuildArrowTower" data-cost="15">Arrow Tower (15)</button>
+				<button id="btnBuildCannonTower" data-cost="25">Cannon Tower (25)</button>
+				<button id="btnBuildIceTower" data-cost="50">Ice Tower (50)</button>
+				<button id="btnBuildFireTower" data-cost="75">Fire Tower (75)</button>
+				<button id="btnBuildLightningTower" data-cost="150">Lightning Tower (150)</button>
+			</section>
+			<section id="controls">
+				<button id="btnStartWave">Start Wave</button>
+				<button id="btnResetGame">Reset Game</button>
+				<!-- <button id="btnUpgrade">Upgrade</button> -->
+				<!-- <button id="btnSell">Sell</button> -->
+			</section>
+		</div>
+		<div id="gameContainer">
+			<canvas id="gameCanvas"></canvas>
+		</div>
+		<script type="module" src="game.js"></script>
+	</body>
+
+</html>
