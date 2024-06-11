@@ -1,4 +1,5 @@
 import { Projectile } from './Projectile.class.js';
+import { enemies } from '../../gameState.js';
 
 export class CannonProjectile extends Projectile
 {
@@ -20,7 +21,7 @@ export class CannonProjectile extends Projectile
 
 			if (distance < this.speed * deltaTime)
 			{
-				this.applySlowEffect();
+                this.applySplashDamage();
 				if (this.target.takeDamage(this.damage))
 				{
 					this.hitTarget = true;
@@ -38,18 +39,19 @@ export class CannonProjectile extends Projectile
 		return false;
 	}
 
-	applySlowEffect()
+	applySplashDamage()
 	{
-		if (!this.target.isSlowed)
+		enemies.forEach(enemy =>
 		{
-			this.target.speed *= this.slowAmount;
-			this.target.isSlowed = true;
-			setTimeout(() =>
+			if (enemy === this.target) return; // Skip the target (it will be hit by the main projectile)
+			const dx = enemy.x - this.x;
+			const dy = enemy.y - this.y;
+			const distance = Math.sqrt(dx * dx + dy * dy);
+			if (distance <= this.explosionRadius)
 			{
-				this.target.speed /= this.slowAmount;
-				this.target.isSlowed = false;
-			}, this.slowDuration);
-		}
+				enemy.takeDamage(this.damage * this.explosionSplash);
+			}
+		});
 	}
 
 	draw(ctx)
