@@ -9,7 +9,7 @@ export class CannonTower extends Tower
 		this.range = 100;
 		this.color = { r: 255, g: 165, b: 0, a: 1 }; //orange
 		this.fireRate = 1;
-		this.cost = 30;
+		this.cost = 25;
 		this.upgradeCost = this.cost * 2;
 		this.damage = 3;
 	}

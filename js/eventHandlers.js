@@ -129,6 +129,8 @@ export function handleBuildTowerClick(type)
 			break;
 	}
 
+	console.log(currency, tower.cost);
+
 	if (currency >= tower.cost)
 	{
 		towers.push(tower);

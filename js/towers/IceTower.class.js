@@ -1,5 +1,4 @@
 import { Tower } from './Tower.class.js';
-import { Projectile } from './projectiles/Projectile.class.js';
 import { IceProjectile } from './projectiles/IceProjectile.class.js';
 
 export class IceTower extends Tower
@@ -22,6 +21,8 @@ export class IceTower extends Tower
 		super.upgrade();
 		this.slowAmount += 0.1;
 		this.slowDuration += 100;
+		this.explosionRadius += 10;
+		this.explosionSplashDamage += 0.1;
 	}
 
 	createProjectile(x, y, target)

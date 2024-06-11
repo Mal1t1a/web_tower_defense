@@ -8,6 +8,8 @@ export class IceProjectile extends Projectile
 		this.color = { r: 0, g: 255, b: 255, a: 1 }; //cyan
 		this.slowAmount = slowAmount; // Reduce the enemy's speed by 50%
 		this.slowDuration = slowDuration; // Slow effect lasts for 1 second
+		this.explosionRadius = 100;
+		this.explosionSplash = 0.5;
 	}
 
 	move(deltaTime)
@@ -20,7 +22,7 @@ export class IceProjectile extends Projectile
 
 			if (distance < this.speed * deltaTime)
 			{
-				this.applySlowEffect();
+				this.applySlowEffect(this.target, this.slowAmount);
 				if (this.target.takeDamage(this.damage))
 				{
 					this.hitTarget = true;
@@ -38,16 +40,32 @@ export class IceProjectile extends Projectile
 		return false;
 	}
 
-	applySlowEffect()
+	applySplashSlow()
 	{
-		if (!this.target.isSlowed)
+		enemies.forEach(enemy =>
 		{
-			this.target.speed *= this.slowAmount;
-			this.target.isSlowed = true;
+			if (enemy === this.target) return; // Skip the target (it will be hit by the main projectile)
+			const dx = enemy.x - this.x;
+			const dy = enemy.y - this.y;
+			const distance = Math.sqrt(dx * dx + dy * dy);
+			if (distance <= this.explosionRadius)
+			{
+				enemy.takeDamage(this.damage * this.explosionSplash);
+				this.applySlowEffect(enemy, this.slowAmount * this.explosionSplash);
+			}
+		});
+	}
+
+	applySlowEffect(enemy, slowAmount)
+	{
+		if (!enemy.isSlowed)
+		{
+			enemy.speed *= slowAmount;
+			enemy.isSlowed = true;
 			setTimeout(() =>
 			{
-				this.target.speed /= this.slowAmount;
-				this.target.isSlowed = false;
+				enemy.speed /= slowAmount;
+				enemy.isSlowed = false;
 			}, this.slowDuration);
 		}
 	}
