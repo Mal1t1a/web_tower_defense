@@ -101,9 +101,13 @@ function renderGame()
 
 	if (mouseX !== null && mouseY !== null)
 	{
-		if (isOccupied(mouseX, mouseY) || isOnPath(mouseX, mouseY))
+		if (isOnPath(mouseX, mouseY))
 		{
 			drawGhostedTower(mouseX, mouseY, 'rgba(255, 0, 0, 0.5)');
+		}
+		else if (isOccupied(mouseX, mouseY))
+		{
+			drawGhostedTower(mouseX, mouseY, 'rgba(0, 125, 255, 0.15)');
 		}
 		else
 		{

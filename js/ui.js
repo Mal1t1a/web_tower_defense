@@ -1,4 +1,4 @@
-import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower } from "./gameState.js";
+import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower, autoStartWave, setAutoStartWave, sellTower, waveActive } from "./gameState.js";
 import { handleBuildTowerClick } from "./eventHandlers.js";
 
 export const canvas = document.getElementById('gameCanvas');
@@ -11,8 +11,10 @@ export const waveStart = document.getElementById('waveStart');
 export const waveClear = document.getElementById('waveClear');
 
 export const btnStartWave = document.getElementById('btnStartWave');
+export const btnStopAutoWave = document.getElementById('btnStopAutoWave');
 export const btnResetGame = document.getElementById('btnResetGame');
 export const btnUpgradeTower = document.getElementById('btnUpgradeTower');
+export const btnSellTower = document.getElementById('btnSellTower');
 
 export const buildMenu = document.getElementById('buildMenu');
 export const btnBuildArrowTower = document.getElementById('btnBuildArrowTower');
@@ -24,10 +26,53 @@ export const btnBuildSniperTower = document.getElementById('btnBuildSniperTower'
 
 canvas.width = 800;
 canvas.height = 600;
+let holdTimeHwnd = 0;
+let autoStartTicks = 0;
 
 btnStartWave.addEventListener('click', startWave);
+btnStopAutoWave.addEventListener('click', () =>
+{
+	setAutoStartWave(false);
+	btnStartWave.style.display = 'block';
+	btnStopAutoWave.style.display = 'none';
+});
+btnStartWave.addEventListener('mousedown', () =>
+{
+	btnStartWave.classList.add('held');
+	holdTimeHwnd = setInterval(() =>
+	{
+		autoStartTicks++;
+		if (autoStartTicks >= 3)
+		{
+			setAutoStartWave(true);
+			btnStartWave.style.display = 'none';
+			btnStopAutoWave.style.display = 'block';
+			btnStartWave.querySelector('#text').textContent = 'Start Wave';
+			if (!waveActive)
+			{
+				startWave();
+			}
+			clearInterval(holdTimeHwnd);
+		}
+		else
+		{
+			btnStartWave.querySelector('#text').textContent = `Auto Start in ${3 - autoStartTicks}`;
+		}
+	}, 1000);
+
+	window.addEventListener('mouseup', () =>
+	{
+		btnStartWave.classList.remove('held');
+		autoStartTicks = 0;
+		clearInterval(holdTimeHwnd);
+		btnStartWave.querySelector('#text').textContent = 'Start Wave';
+		window.removeEventListener('mouseup', null);
+	});
+});
 btnResetGame.addEventListener('click', resetGame);
 btnUpgradeTower.addEventListener('click', upgradeTower);
+btnSellTower.addEventListener('click', sellTower);
+
 btnBuildArrowTower.addEventListener('click', () => handleBuildTowerClick('arrow'));
 btnBuildCannonTower.addEventListener('click', () => handleBuildTowerClick('cannon'));
 btnBuildIceTower.addEventListener('click', () => handleBuildTowerClick('ice'));
@@ -113,6 +158,8 @@ export function setInactiveWaveUI()
 	});
 };
 
+//TODO: There's gotta be a better way to do this but I'm tired rn and also I might be getting lazy
+
 export function showBuildMenu()
 {
 	buildMenu.classList.add('active');
@@ -131,4 +178,34 @@ export function showUpgradeButton()
 export function hideUpgradeButton()
 {
 	btnUpgradeTower.classList.add('inactive');
+};
+
+export function setUpgradeButtonText(cost)
+{
+	if (cost === 0)
+	{
+		btnUpgradeTower.textContent = 'Upgrade Tower';
+		return;
+	}
+	btnUpgradeTower.textContent = `Upgrade Tower (${cost})`;
+};
+
+export function showSellTowerButton()
+{
+	btnSellTower.classList.remove('inactive');
+};
+
+export function hideSellTowerButton()
+{
+	btnSellTower.classList.add('inactive');
+};
+
+export function setSellTowerButtonText(cost)
+{
+	if (cost === 0)
+	{
+		btnSellTower.textContent = 'Sell Tower';
+		return;
+	}
+	btnSellTower.textContent = `Sell Tower (${cost})`;
 };

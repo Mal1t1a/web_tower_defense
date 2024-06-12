@@ -1,4 +1,5 @@
 import { Projectile } from './Projectile.class.js';
+import { enemies } from '../../gameState.js';
 
 export class IceProjectile extends Projectile
 {
@@ -8,7 +9,7 @@ export class IceProjectile extends Projectile
 		this.color = { r: 0, g: 255, b: 255, a: 1 }; //cyan
 		this.slowAmount = slowAmount; // Reduce the enemy's speed by 50%
 		this.slowDuration = slowDuration; // Slow effect lasts for 1 second
-		this.explosionRadius = 100;
+		this.explosionRadius = 50;
 		this.explosionSplash = 0.5;
 	}
 
@@ -23,6 +24,7 @@ export class IceProjectile extends Projectile
 			if (distance < this.speed * deltaTime)
 			{
 				this.applySlowEffect(this.target, this.slowAmount);
+				this.applySplashSlow();
 				if (this.target.takeDamage(this.damage))
 				{
 					this.hitTarget = true;
@@ -44,7 +46,10 @@ export class IceProjectile extends Projectile
 	{
 		enemies.forEach(enemy =>
 		{
-			if (enemy === this.target) return; // Skip the target (it will be hit by the main projectile)
+			if (enemy === this.target)
+			{
+				return;
+			}
 			const dx = enemy.x - this.x;
 			const dy = enemy.y - this.y;
 			const distance = Math.sqrt(dx * dx + dy * dy);
@@ -62,7 +67,23 @@ export class IceProjectile extends Projectile
 		{
 			enemy.speed *= slowAmount;
 			enemy.isSlowed = true;
-			setTimeout(() =>
+			if (enemy.slowTimeout)
+			{
+				clearTimeout(enemy.slowTimeout);
+			}
+			enemy.slowTimeout = setTimeout(() =>
+			{
+				enemy.speed /= slowAmount;
+				enemy.isSlowed = false;
+			}, this.slowDuration);
+		}
+		else
+		{
+			if (enemy.slowTimeout)
+			{
+				clearTimeout(enemy.slowTimeout);
+			}
+			enemy.slowTimeout = setTimeout(() =>
 			{
 				enemy.speed /= slowAmount;
 				enemy.isSlowed = false;

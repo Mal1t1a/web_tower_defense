@@ -43,7 +43,6 @@ body
 	flex-direction: column;
 	align-items: center;
 	gap: 10px;
-	height: 150px;
 }
 
 button
@@ -53,7 +52,8 @@ button
 	color: #fff;
 	border: none;
 	cursor: pointer;
-	width: 150px;
+	width: 175px;
+	position: relative;
 }
 
 button:hover
@@ -66,6 +66,29 @@ button.inactive
 	opacity: 0.5;
 	cursor: not-allowed;
 	pointer-events: none;
+}
+
+#btnStopAutoWave
+{
+	display: none;
+}
+
+#holdToAutoStart
+{
+	display: none;
+	width: 0%;
+    height: 100%;
+    background-color: #ffffff40;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+
+button.held #holdToAutoStart
+{
+	display: block;
+	animation: growWidth 3s linear;
 }
 
 #gameContainer
@@ -311,6 +334,19 @@ button.inactive
 	100%
 	{
 		right: calc(100% + 20rem);
+	}
+}
+
+@keyframes growWidth
+{
+	0%
+	{
+		width: 0%;
+	}
+
+	100%
+	{
+		width: 100%;
 	}
 }
 

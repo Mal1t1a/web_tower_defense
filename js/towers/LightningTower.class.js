@@ -1,5 +1,5 @@
 import { Tower } from './Tower.class.js';
-import { Projectile } from './projectiles/Projectile.class.js';
+import { LightningProjectile } from './projectiles/index.js';
 
 export class LightningTower extends Tower
 {
@@ -16,6 +16,6 @@ export class LightningTower extends Tower
 
 	createProjectile(x, y, target)
 	{
-		return new Projectile(x, y, target);
+		return new LightningProjectile(x, y, target);
 	}
 }

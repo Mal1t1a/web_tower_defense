@@ -1,7 +1,7 @@
 import { Enemy } from './Enemy.js';
 import { path } from './Path.js';
 import { EventEmitter } from './eventEmitter.js';
-import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton } from './ui.js';
+import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton, setUpgradeButtonText, showSellTowerButton, hideSellTowerButton, setSellTowerButtonText } from './ui.js';
 import { CircleParticle, SquareParticle, TextParticle } from './particles/index.js';
 
 export const towers = [];
@@ -22,6 +22,7 @@ export let mouseY = null;
 export let selectedX = null;
 export let selectedY = null;
 export let showPathIndicator = true;
+export let autoStartWave = false;
 
 export async function startWave()
 {
@@ -47,7 +48,14 @@ export async function startWave()
 export function endWave()
 {
 	waveActive = false;
-	setInactiveWaveUI();
+	if (autoStartWave)
+	{
+		startWave();
+	}
+	else
+	{
+		setInactiveWaveUI();
+	}
 };
 
 export function particleExplosion(x, y, color, amount = 10)
@@ -77,7 +85,7 @@ export function addEnemy(deltaTime)
 		if (enemySpawnTimer <= 0)
 		{
 			const type = Math.random() > 0.5 ? 'basic' : 'fast';
-			const speed = type === 'basic' ? 100 : 200;
+			let speed = type === 'basic' ? 100 : 200;
 			let healthMultiplier = waveNumber; // Increase health with each wave
 			const enemy = new Enemy(path, speed, type);
 			if (waveNumber % 5 === 0 && enemiesSpawned >= enemiesPerWave-1)
@@ -113,6 +121,7 @@ export function increaseCurrency(amount)
 	currency += amount;
 	updateCurrency(currency);
 	checkShowUpgradeButton();
+	checkShowSellTowerButton();
 };
 
 export function decreaseCurrency(amount)
@@ -120,6 +129,7 @@ export function decreaseCurrency(amount)
 	currency -= amount;
 	updateCurrency(currency);
 	checkShowUpgradeButton();
+	checkShowSellTowerButton();
 };
 
 export function increaseLives(amount)
@@ -167,6 +177,7 @@ export function resetGame()
 	selectedX = null;
 	selectedY = null;
 	showPathIndicator = true;
+	autoStartWave = false;
 
 	updateScore(score);
 	updateWave(waveNumber);
@@ -175,7 +186,10 @@ export function resetGame()
 	setMousePosition(null, null);
 	setSelectedPosition(null, null);
 	hideUpgradeButton();
+	hideSellTowerButton();
 	setInactiveWaveUI();
+	setUpgradeButtonText(0);
+	setSellTowerButtonText(0);
 };
 
 export function setMousePosition(x, y)
@@ -199,6 +213,8 @@ export function checkShowUpgradeButton()
 {
 	if (selectedX === null || selectedY === null)
 	{
+		hideUpgradeButton();
+		setUpgradeButtonText(0);
 		return;
 	}
 
@@ -206,10 +222,19 @@ export function checkShowUpgradeButton()
 	if (tower && currency >= tower.upgradeCost)
 	{
 		showUpgradeButton();
+		setUpgradeButtonText(tower.upgradeCost);
 	}
 	else
 	{
 		hideUpgradeButton();
+		if (tower)
+		{
+			setUpgradeButtonText(tower.upgradeCost);
+		}
+		else
+		{
+			setUpgradeButtonText(0);
+		}
 	}
 };
 
@@ -226,5 +251,52 @@ export function upgradeTower()
 		let cost = tower.upgradeCost;
 		tower.upgrade();
 		decreaseCurrency(cost);
+		checkShowUpgradeButton();
 	}
+};
+
+export function sellTower()
+{
+	if (selectedX === null || selectedY === null)
+	{
+		return;
+	}
+
+	const tower = towers.find(tower => tower.x === selectedX && tower.y === selectedY);
+	if (tower)
+	{
+		let value = Math.round(tower.upgradeCost / 2 * 0.75);
+		increaseCurrency(value);
+		towers.splice(towers.indexOf(tower), 1);
+		checkShowSellTowerButton();
+		checkShowUpgradeButton();
+	}
+};
+
+export function checkShowSellTowerButton()
+{
+	if (selectedX === null || selectedY === null)
+	{
+		hideSellTowerButton();
+		setSellTowerButtonText(0);
+		return;
+	}
+
+	const tower = towers.find(tower => tower.x === selectedX && tower.y === selectedY);
+	if (tower)
+	{
+		showSellTowerButton();
+		setSellTowerButtonText(Math.round(tower.upgradeCost / 2 * 0.75));
+	}
+	else
+	{
+		hideSellTowerButton();
+		setSellTowerButtonText(0);
+	}
+
+}
+
+export function setAutoStartWave(value)
+{
+	autoStartWave = value;
 };

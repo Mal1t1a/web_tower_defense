@@ -52,9 +52,21 @@ export class Enemy extends EventEmitter
 
 	draw(ctx)
 	{
-		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
-		ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
+		if (this.isSlowed)
+		{
+			ctx.fillStyle = `rgba(${Math.min(255, this.color.r - 50)}, ${Math.min(255, this.color.g + 25)}, ${Math.min(255, this.color.b + 100)}, 1)`;
+			ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
+		}
+		else
+		{
+			ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
+			ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
+		}
 
+		// Draw health bar background
+		ctx.fillStyle = 'rgba(125, 0, 0, 1)';
+		ctx.fillRect(this.x - 10, this.y - 20, 20, 5);
+		
 		// Draw health bar
 		ctx.fillStyle = 'green';
 		ctx.fillRect(this.x - 10, this.y - 20, 20 * (this.health / this.maxHealth), 5);

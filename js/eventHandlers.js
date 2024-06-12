@@ -1,4 +1,4 @@
-import { towers, currency, decreaseCurrency, startWave, setMousePosition, setSelectedPosition, mouseX, mouseY, selectedX, selectedY } from './gameState.js';
+import { towers, currency, decreaseCurrency, startWave, setMousePosition, setSelectedPosition, mouseX, mouseY, selectedX, selectedY, checkShowUpgradeButton, checkShowSellTowerButton } from './gameState.js';
 import { path } from './Path.js';
 import { showBuildMenu, hideBuildMenu, hideUpgradeButton, showUpgradeButton } from './ui.js';
 import { ArrowTower, CannonTower, IceTower, FireTower, LightningTower, SniperTower } from './towers/index.js';
@@ -81,6 +81,8 @@ export function handleCanvasClick(event, canvas)
 		hideBuildMenu();
 		hideUpgradeButton();
 	}
+	checkShowSellTowerButton();
+	checkShowUpgradeButton();
 }
 
 export function handleCanvasMouseMove(event, canvas)
@@ -144,6 +146,8 @@ export function handleBuildTowerClick(type)
 		{
 			hideUpgradeButton();
 		}
+		checkShowSellTowerButton();
+		checkShowUpgradeButton();
 	}
 
 	// setSelectedPosition(null, null);
