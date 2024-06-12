@@ -160,6 +160,8 @@ button.held #holdToAutoStart
 	animation-delay: 0s, 2.5s;
 	animation-timing-function: ease, ease;
 	animation-fill-mode: forwards, forwards;
+
+	pointer-events: none;
 }
 
 .container

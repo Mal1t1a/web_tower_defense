@@ -1,7 +1,7 @@
 import { Enemy } from './Enemy.js';
 import { path } from './Path.js';
 import { EventEmitter } from './eventEmitter.js';
-import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton, setUpgradeButtonText, showSellTowerButton, hideSellTowerButton, setSellTowerButtonText } from './ui.js';
+import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton, setUpgradeButtonText, showSellTowerButton, hideSellTowerButton, setSellTowerButtonText, showBuildMenu } from './ui.js';
 import { CircleParticle, SquareParticle, TextParticle } from './particles/index.js';
 
 export const towers = [];
@@ -270,6 +270,7 @@ export function sellTower()
 		towers.splice(towers.indexOf(tower), 1);
 		checkShowSellTowerButton();
 		checkShowUpgradeButton();
+		showBuildMenu();
 	}
 };
 

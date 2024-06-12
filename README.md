@@ -4,10 +4,12 @@ This was a simple tower defense game. Pretty much clone it and open `index.html`
 ## Made by Mal1t1a
 This was just a random project I was working on while I was sick.
 
+## Where to play
+You can play it at: [https://mal1t1a.ca/tower_defense/](https://mal1t1a.ca/tower_defense/)
+
 ### Todos:
 - More Towers
 - More Enemies
-- Splash Damage
 - Balancing
 - Sounds
 - Music
