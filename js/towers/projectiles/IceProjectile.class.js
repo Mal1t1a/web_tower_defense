@@ -1,5 +1,5 @@
 import { Projectile } from './Projectile.class.js';
-import { enemies } from '../../gameState.js';
+import { enemies, showGlow } from '../../gameState.js';
 
 export class IceProjectile extends Projectile
 {
@@ -93,6 +93,17 @@ export class IceProjectile extends Projectile
 
 	draw(ctx)
 	{
+		if (showGlow)
+		{
+			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
+			ctx.shadowBlur = 15;
+		}
+		
 		super.draw(ctx);
+		
+		if (showGlow)
+		{
+			ctx.shadowBlur = 0;
+		}
 	}
 }

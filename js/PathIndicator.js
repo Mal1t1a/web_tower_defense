@@ -1,3 +1,5 @@
+import { showGlow } from "./gameState.js";
+
 export class PathIndicator
 {
 	constructor({ path, offset = 0, speed = 200})
@@ -50,8 +52,12 @@ export class PathIndicator
 	draw(ctx)
 	{
 		
-		ctx.shadowColor = `rgba(0, 200, 255, 1)`;
-		ctx.shadowBlur = 15;
+		if (showGlow)
+		{
+			ctx.shadowColor = `rgba(0, 200, 255, 1)`;
+			ctx.shadowBlur = 15;
+		}
+		
 		ctx.strokeStyle = 'rgba(0, 200, 255, 0.75)';
 		ctx.lineWidth = 5;
 		ctx.beginPath();
@@ -66,6 +72,10 @@ export class PathIndicator
 		ctx.stroke();
 		ctx.closePath();
 		ctx.lineWidth = 1; // Reset line width
-		ctx.shadowBlur = 0;
+
+		if (showGlow)
+		{
+			ctx.shadowBlur = 0;
+		}
 	}
 }

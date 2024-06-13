@@ -30,6 +30,7 @@ export let waveIsDeactivating = false;
 export let difficulty = 1;
 export let isPathEditing = false;
 export let gridSize = 40;
+export let showGlow = true;
 
 export let selectedRNGPath = RandomNumber(1, 4);
 for (var i = 0; i < 10; i++)
@@ -411,3 +412,9 @@ export function setGridSize(value)
 {
 	gridSize = value;
 };
+
+export function setShowGlow(value)
+{
+	showGlow = value;
+};
+

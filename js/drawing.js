@@ -1,5 +1,5 @@
 import { ctx, canvas } from "./ui.js";
-import { isPathEditing, gridSize, mouseX, mouseY, selectedX, selectedY } from "./gameState.js";
+import { isPathEditing, gridSize, mouseX, mouseY, selectedX, selectedY, showGlow } from "./gameState.js";
 
 export function drawGrid(ctx, canvasWidth, canvasHeight)
 {
@@ -56,20 +56,30 @@ export function drawPath(ctx, path)
 
 			if (selectedX !== null && selectedY !== null && selectedX > path[i].x - 10 && selectedX < path[i].x + 10 && selectedY > path[i].y - 10 && selectedY < path[i].y + 10)
 			{
-				ctx.shadowColor = 'yellow';
-				ctx.shadowBlur = 10;
+				if (showGlow)
+				{
+					ctx.shadowColor = 'yellow';
+					ctx.shadowBlur = 10;
+				}
 				ctx.fillStyle = 'yellow';
 			}
 			else if (mouseX !== null && mouseY !== null && mouseX > path[i].x - 10 && mouseX < path[i].x + 10 && mouseY > path[i].y - 10 && mouseY < path[i].y + 10)
 			{
-				ctx.shadowColor = 'cyan';
-				ctx.shadowBlur = 10;
+				if (showGlow)
+				{
+					ctx.shadowColor = 'cyan';
+					ctx.shadowBlur = 10;
+				}
 				ctx.fillStyle = 'cyan';
 			}
 			ctx.beginPath();
 			ctx.arc(path[i].x, path[i].y, 5, 0, 2 * Math.PI);
 			ctx.fill();
-			ctx.shadowBlur = 0;
+
+			if (showGlow)
+			{
+				ctx.shadowBlur = 0;
+			}
 		}
 	}
 }

@@ -1,10 +1,18 @@
-import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower, autoStartWave, setAutoStartWave, sellTower, waveActive } from "./gameState.js";
+import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower, autoStartWave, setAutoStartWave, sellTower, waveActive, setShowGlow, showGlow } from "./gameState.js";
 import { handleBuildTowerClick, handlePageKeyDown, handlePageKeyUp } from "./eventHandlers.js";
 
 export const canvas = document.getElementById('gameCanvas');
 export const ctx = canvas.getContext('2d');
 
 export const gameUI = document.getElementById('gameUI');
+
+export const settingsUI = document.getElementById('settingsUI');
+export const confirmReset = document.getElementById('confirmReset');
+export const btnResetGameConfirm = document.getElementById('btnResetGameConfirm');
+export const btnResetGameCancel = document.getElementById('btnResetGameCancel');
+export const btnToggleGlow = document.getElementById('btnToggleGlow');
+export const btnCloseSettings = document.getElementById('btnCloseSettings');
+
 export const editorUI = document.getElementById('editorUI');
 export const editorControls = document.getElementById('editorControls');
 export const pathControls = document.getElementById('pathControls');
@@ -35,6 +43,7 @@ export const btnStopAutoWave = document.getElementById('btnStopAutoWave');
 export const btnResetGame = document.getElementById('btnResetGame');
 export const btnUpgradeTower = document.getElementById('btnUpgradeTower');
 export const btnSellTower = document.getElementById('btnSellTower');
+export const btnSettings = document.getElementById('btnSettings');
 
 export const buildMenu = document.getElementById('buildMenu');
 export const btnBuildArrowTower = document.getElementById('btnBuildArrowTower');
@@ -48,6 +57,40 @@ canvas.width = 800;
 canvas.height = 600;
 let holdTimeHwnd = 0;
 let autoStartTicks = 0;
+
+btnResetGame.addEventListener('click', () =>
+{
+	btnResetGame.style.display = 'none';
+	confirmReset.style.display = 'block';
+});
+btnResetGameConfirm.addEventListener('click', () =>
+{
+	btnResetGame.style.display = 'block';
+	confirmReset.style.display = 'none';
+	settingsUI.style.display = 'none';
+	resetGame();
+});
+btnResetGameCancel.addEventListener('click', () =>
+{
+	btnResetGame.style.display = 'block';
+	confirmReset.style.display = 'none';
+});
+btnToggleGlow.addEventListener('click', () =>
+{
+	setShowGlow(!showGlow);
+	if (!showGlow)
+	{
+		btnToggleGlow.textContent = 'Enable Glow Effect';
+	}
+	else
+	{
+		btnToggleGlow.textContent = 'Disable Glow Effect';
+	}
+});
+btnCloseSettings.addEventListener('click', () =>
+{
+	settingsUI.style.display = 'none';
+});
 
 btnStartWave.addEventListener('click', startWave);
 btnStopAutoWave.addEventListener('click', () =>
@@ -89,9 +132,12 @@ btnStartWave.addEventListener('mousedown', () =>
 		window.removeEventListener('mouseup', null);
 	});
 });
-btnResetGame.addEventListener('click', resetGame);
 btnUpgradeTower.addEventListener('click', upgradeTower);
 btnSellTower.addEventListener('click', sellTower);
+btnSettings.addEventListener('click', () =>
+{
+	settingsUI.style.display = 'block';
+});
 
 btnBuildArrowTower.addEventListener('click', () => handleBuildTowerClick('arrow'));
 btnBuildCannonTower.addEventListener('click', () => handleBuildTowerClick('cannon'));

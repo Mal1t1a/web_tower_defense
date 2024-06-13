@@ -5,7 +5,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Tower Defense Game</title>
-		<link rel="stylesheet" href="styles.css?rng=149876142987">
+		<link rel="stylesheet" href="styles.css">
 		<meta name="description" content="A simple tower defense game built with HTML5, CSS3, and JavaScript.">
 		<meta name="keywords" content="tower defense, game, html5, css3, javascript">
 		<meta name="author" content="Myles Vanevery">
@@ -23,6 +23,23 @@
 				<h1>Wave Clear</h1>
 				<div class="underline"></div>
 			</div>
+		</div>
+		<div id="settingsUI">
+			<!--
+				# settings UI
+				This UI is hidden by default and is shown when the user clicks the settings button.
+				It will house the settings for "Reset Game" and "Toggle Glow Effect".
+			-->
+			<section id="settingsControls">
+				<button id="btnResetGame">Reset Game</button>
+				<div id="confirmReset">
+					<p>Are you sure you want to reset the game?</p>
+					<button id="btnResetGameConfirm">Yes</button>
+					<button id="btnResetGameCancel">No</button>
+				</div>
+				<button id="btnToggleGlow">Disable Glow Effect</button>
+				<button id="btnCloseSettings">Close Settings Menu</button>
+			</section>
 		</div>
 		<div id="editorUI">
 			<section id="editorControls">
@@ -63,7 +80,7 @@
 					<div id="holdToAutoStart"></div>
 				</button>
 				<button id="btnStopAutoWave">Stop Auto</button>
-				<button id="btnResetGame">Reset Game</button>
+				<button id="btnSettings">Open Settings</button>
 				<button id="btnUpgradeTower">Upgrade Tower</button>
 				<button id="btnSellTower">Sell Tower</button>
 			</section>

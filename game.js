@@ -1,5 +1,5 @@
 import { drawGrid, drawPath, clearCanvas, drawGhostedTower, drawSelection } from './js/drawing.js';
-import { towers, enemies, particles, enemySpawnTimer, score, lives, gameOver, waveNumber, enemiesPerWave, enemiesSpawned, waveActive, currency, startWave, addEnemy, resetGame, increaseScore, increaseCurrency, decreaseCurrency, setGameOver, decreaseLives, mouseX, mouseY, selectedX, selectedY, setMousePosition, showPathIndicator, setPathEditing, setGridSize, currentPath, isPathEditing } from './js/gameState.js';
+import { towers, enemies, particles, enemySpawnTimer, score, lives, gameOver, waveNumber, enemiesPerWave, enemiesSpawned, waveActive, currency, startWave, addEnemy, resetGame, increaseScore, increaseCurrency, decreaseCurrency, setGameOver, decreaseLives, mouseX, mouseY, selectedX, selectedY, setMousePosition, showPathIndicator, setPathEditing, setGridSize, currentPath, isPathEditing, showGlow } from './js/gameState.js';
 import { handleCanvasClick, isOccupied, isOnPath, handleCanvasMouseMove } from './js/eventHandlers.js';
 import { ctx, canvas } from './js/ui.js';
 import { PathIndicator } from './js/PathIndicator.js';
@@ -127,10 +127,16 @@ function renderGame()
 		{
 			if (!isOccupied(selectedX, selectedY) && !isOnPath(selectedX, selectedY))
 			{
-				ctx.shadowColor = `rgba(0, 125, 255, 1)`;
-				ctx.shadowBlur = 5;
+				if (showGlow)
+				{
+					ctx.shadowColor = `rgba(0, 125, 255, 1)`;
+					ctx.shadowBlur = 5;
+				}
 				drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
-				ctx.shadowBlur = 0;
+				if (showGlow)
+				{
+					ctx.shadowBlur = 0;
+				}
 			}
 			else if (isOnPath(selectedX, selectedY))
 			{
@@ -138,10 +144,16 @@ function renderGame()
 			}
 			else if (isOccupied(selectedX, selectedY))
 			{
-				ctx.shadowColor = `rgba(0, 125, 255, 1)`;
-				ctx.shadowBlur = 5;
+				if (showGlow)
+				{
+					ctx.shadowColor = `rgba(0, 125, 255, 1)`;
+					ctx.shadowBlur = 5;
+				}
 				drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
-				ctx.shadowBlur = 0;
+				if (showGlow)
+				{
+					ctx.shadowBlur = 0;
+				}
 			}
 		}
 	}

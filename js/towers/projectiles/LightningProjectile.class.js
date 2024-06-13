@@ -1,5 +1,5 @@
 import { Projectile } from './Projectile.class.js';
-import { enemies } from '../../gameState.js';
+import { enemies, showGlow } from '../../gameState.js';
 
 export class LightningProjectile extends Projectile
 {
@@ -88,8 +88,11 @@ export class LightningProjectile extends Projectile
 
 	draw(ctx)
 	{
-		ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
-		ctx.shadowBlur = 15;
+		if (showGlow)
+		{		
+			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
+			ctx.shadowBlur = 15;
+		}
 		// super.draw(ctx);
 		
 		//draw the lightning bolt
@@ -109,6 +112,10 @@ export class LightningProjectile extends Projectile
 		}
 		
 		ctx.stroke();
-		ctx.shadowBlur = 0;
+
+		if (showGlow)
+		{
+			ctx.shadowBlur = 0;
+		}
 	}
 }

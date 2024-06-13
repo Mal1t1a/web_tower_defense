@@ -1,5 +1,5 @@
 import { EventEmitter } from '../eventEmitter.js';
-import { particleExplosion, textParticle } from '../gameState.js';
+import { particleExplosion, textParticle, showGlow } from '../gameState.js';
 
 export class Enemy extends EventEmitter
 {
@@ -44,7 +44,7 @@ export class Enemy extends EventEmitter
 
 	draw(ctx)
 	{
-		if (this.glow)
+		if (this.glow && showGlow)
 		{
 			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
 			ctx.shadowBlur = 15;
@@ -63,7 +63,7 @@ export class Enemy extends EventEmitter
 			ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
 		}
 
-		if (this.glow)
+		if (this.glow && showGlow)
 		{
 			ctx.shadowBlur = 0;
 		}
