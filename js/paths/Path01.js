@@ -1,4 +1,4 @@
-export const path = [
+export const path01 = [
 	{ x: 0, y: 300 },
 	{ x: 100, y: 300 },
 	{ x: 200, y: 200 },

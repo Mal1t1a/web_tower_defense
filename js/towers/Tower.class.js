@@ -1,5 +1,6 @@
 import { Projectile } from './projectiles/Projectile.class.js';
 import { EventEmitter } from '../eventEmitter.js';
+import { particleExplosion } from '../gameState.js';
 
 export class Tower extends EventEmitter
 {
@@ -81,6 +82,7 @@ export class Tower extends EventEmitter
 			if (projectile.hitTarget)
 			{
 				this.emit('hit', projectile);
+				// particleExplosion(projectile.x, projectile.y, projectile.color, 3);
 			}
 			return !projectile.hitTarget; // Remove projectile if it hit the target
 		});

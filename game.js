@@ -1,16 +1,15 @@
-import { path } from './js/Path.js';
 import { drawGrid, drawPath, clearCanvas, drawGhostedTower, drawSelection } from './js/drawing.js';
-import { towers, enemies, particles, enemySpawnTimer, score, lives, gameOver, waveNumber, enemiesPerWave, enemiesSpawned, waveActive, currency, startWave, addEnemy, resetGame, increaseScore, increaseCurrency, decreaseCurrency, setGameOver, decreaseLives, mouseX, mouseY, selectedX, selectedY, setMousePosition, showPathIndicator } from './js/gameState.js';
+import { towers, enemies, particles, enemySpawnTimer, score, lives, gameOver, waveNumber, enemiesPerWave, enemiesSpawned, waveActive, currency, startWave, addEnemy, resetGame, increaseScore, increaseCurrency, decreaseCurrency, setGameOver, decreaseLives, mouseX, mouseY, selectedX, selectedY, setMousePosition, showPathIndicator, setPathEditing, setGridSize, currentPath, isPathEditing } from './js/gameState.js';
 import { handleCanvasClick, isOccupied, isOnPath, handleCanvasMouseMove } from './js/eventHandlers.js';
 import { ctx, canvas } from './js/ui.js';
 import { PathIndicator } from './js/PathIndicator.js';
+import { Editor } from './js/Editor.js';
 
 const pathIndicators = [
-	new PathIndicator(),
-	new PathIndicator(4),
-	new PathIndicator(9),
-	new PathIndicator(14),
-	new PathIndicator(19),
+	new PathIndicator({ path: currentPath, offset: 0 }),
+	new PathIndicator({ path: currentPath, offset: 4 }),
+	new PathIndicator({ path: currentPath, offset: 14 }),
+	new PathIndicator({ path: currentPath, offset: 19 }),
 ];
 
 const FPS = 60;
@@ -43,7 +42,7 @@ function updateGameLogic(deltaTime)
 		enemy.move(deltaTime);
 
 		// Check if enemy reached the end of the path
-		if (enemy.currentPoint >= path.length - 1)
+		if (enemy.currentPoint >= currentPath.length - 1)
 		{
 			enemies.splice(index, 1);
 			decreaseLives(1); // Decrease base health when an enemy reaches the end
@@ -86,7 +85,7 @@ function renderGame()
 
 	clearCanvas();
 	drawGrid(ctx, canvas.width, canvas.height);
-	drawPath(ctx, path);
+	drawPath(ctx, currentPath);
 
 	towers.forEach(tower =>
 	{
@@ -99,35 +98,51 @@ function renderGame()
 		enemy.draw(ctx);
 	});
 
-	if (mouseX !== null && mouseY !== null)
+	if (isPathEditing)
 	{
-		if (isOnPath(mouseX, mouseY))
-		{
-			drawGhostedTower(mouseX, mouseY, 'rgba(255, 0, 0, 0.5)');
-		}
-		else if (isOccupied(mouseX, mouseY))
-		{
-			drawGhostedTower(mouseX, mouseY, 'rgba(0, 125, 255, 0.15)');
-		}
-		else
+		if (mouseX !== null && mouseY !== null)
 		{
 			drawGhostedTower(mouseX, mouseY, 'rgba(255, 255, 255, 0.25)');
 		}
 	}
-
-	if (selectedX !== null && selectedY !== null)
+	else
 	{
-		if (!isOccupied(selectedX, selectedY) && !isOnPath(selectedX, selectedY))
+		if (mouseX !== null && mouseY !== null)
 		{
-			drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
+			if (isOnPath(mouseX, mouseY))
+			{
+				drawGhostedTower(mouseX, mouseY, 'rgba(255, 0, 0, 0.5)');
+			}
+			else if (isOccupied(mouseX, mouseY))
+			{
+				drawGhostedTower(mouseX, mouseY, 'rgba(0, 125, 255, 0.15)');
+			}
+			else
+			{
+				drawGhostedTower(mouseX, mouseY, 'rgba(255, 255, 255, 0.25)');
+			}
 		}
-		else if (isOnPath(selectedX, selectedY))
+	
+		if (selectedX !== null && selectedY !== null)
 		{
-			drawGhostedTower(selectedX, selectedY, 'rgba(255, 0, 0, 0.5)');
-		}
-		else if (isOccupied(selectedX, selectedY))
-		{
-			drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
+			if (!isOccupied(selectedX, selectedY) && !isOnPath(selectedX, selectedY))
+			{
+				ctx.shadowColor = `rgba(0, 125, 255, 1)`;
+				ctx.shadowBlur = 5;
+				drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
+				ctx.shadowBlur = 0;
+			}
+			else if (isOnPath(selectedX, selectedY))
+			{
+				drawGhostedTower(selectedX, selectedY, 'rgba(255, 0, 0, 0.5)');
+			}
+			else if (isOccupied(selectedX, selectedY))
+			{
+				ctx.shadowColor = `rgba(0, 125, 255, 1)`;
+				ctx.shadowBlur = 5;
+				drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
+				ctx.shadowBlur = 0;
+			}
 		}
 	}
 
@@ -148,11 +163,23 @@ function gameUpdateLoop()
 	updateGameLogic(deltaTime);
 }
 
-setInterval(gameUpdateLoop, FRAME_DURATION);
-requestAnimationFrame(renderGame);
+if (window.location.hash === "#edit")
+{
+	setPathEditing(true);
+	setGridSize(20);
 
-canvas.addEventListener('click', (event) => handleCanvasClick(event, canvas));
-canvas.addEventListener('mousemove', (event) => handleCanvasMouseMove(event, canvas));
-canvas.addEventListener('mouseleave', () => setMousePosition(null, null));
+	const editor = new Editor({ FPS, FRAME_DURATION, speedMultiplier });
+	// setInterval(editor.update.bind(editor), FRAME_DURATION);
+	// requestAnimationFrame(editor.render.bind(editor));
+}
+else
+{
+	setInterval(gameUpdateLoop, FRAME_DURATION);
+	requestAnimationFrame(renderGame);
 
-resetGame();
+	canvas.addEventListener('click', (event) => handleCanvasClick(event, canvas));
+	canvas.addEventListener('mousemove', (event) => handleCanvasMouseMove(event, canvas));
+	canvas.addEventListener('mouseleave', () => setMousePosition(null, null));
+
+	resetGame();
+}

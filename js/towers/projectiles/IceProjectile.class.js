@@ -93,9 +93,6 @@ export class IceProjectile extends Projectile
 
 	draw(ctx)
 	{
-		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
-		ctx.fill();
+		super.draw(ctx);
 	}
 }

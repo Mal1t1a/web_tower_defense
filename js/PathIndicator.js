@@ -1,13 +1,12 @@
-import { path } from './Path.js';
-
 export class PathIndicator
 {
-	constructor(offset = 0)
+	constructor({ path, offset = 0, speed = 200})
 	{
 		this.currentSegment = 0;
 		this.x = path[0].x;
 		this.y = path[0].y;
-		this.speed = 200;
+		this.speed = speed;
+		this.path = path;
 		
 		for (var i = 0; i < offset; i++)
 		{
@@ -18,9 +17,9 @@ export class PathIndicator
 
 	move(deltaTime)
 	{
-		if (this.currentSegment < path.length - 1)
+		if (this.currentSegment < this.path.length - 1)
 		{
-			const target = path[this.currentSegment + 1];
+			const target = this.path[this.currentSegment + 1];
 			const dx = target.x - this.x;
 			const dy = target.y - this.y;
 			const distance = Math.sqrt(dx * dx + dy * dy);
@@ -28,11 +27,11 @@ export class PathIndicator
 			if (distance < this.speed * deltaTime)
 			{
 				this.currentSegment++;
-				if (this.currentSegment >= path.length - 1)
+				if (this.currentSegment >= this.path.length - 1)
 				{
 					this.currentSegment = 0;
-					this.x = path[0].x;
-					this.y = path[0].y;
+					this.x = this.path[0].x;
+					this.y = this.path[0].y;
 				}
 				else
 				{
@@ -50,20 +49,23 @@ export class PathIndicator
 
 	draw(ctx)
 	{
-		let oldLineWidth = ctx.lineWidth;
+		
+		ctx.shadowColor = `rgba(0, 200, 255, 1)`;
+		ctx.shadowBlur = 15;
 		ctx.strokeStyle = 'rgba(0, 200, 255, 0.75)';
 		ctx.lineWidth = 5;
 		ctx.beginPath();
 		ctx.moveTo(this.x, this.y);
 
 		// Arrow head
-		const angle = Math.atan2(path[this.currentSegment + 1].y - this.y, path[this.currentSegment + 1].x - this.x);
+		const angle = Math.atan2(this.path[this.currentSegment + 1].y - this.y, this.path[this.currentSegment + 1].x - this.x);
 		const size = 15;
 		ctx.lineTo(this.x - size * Math.cos(angle - Math.PI / 6), this.y - size * Math.sin(angle - Math.PI / 6));
 		ctx.moveTo(this.x, this.y);
 		ctx.lineTo(this.x - size * Math.cos(angle + Math.PI / 6), this.y - size * Math.sin(angle + Math.PI / 6));
 		ctx.stroke();
 		ctx.closePath();
-		ctx.lineWidth = oldLineWidth;
+		ctx.lineWidth = 1; // Reset line width
+		ctx.shadowBlur = 0;
 	}
 }

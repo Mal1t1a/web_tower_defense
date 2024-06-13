@@ -20,9 +20,12 @@ export class TextParticle extends Particle
 
 	draw(ctx)
 	{
+		ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
+		ctx.shadowBlur = 15;
 		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.font = this.font;
 		ctx.textAlign = this.textAlign;
 		ctx.fillText(this.text, this.x, this.y);
+		ctx.shadowBlur = 0;
 	}
 };

@@ -9,7 +9,10 @@ export class SquareParticle extends Particle
 
 	draw(ctx)
 	{
+		ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
+		ctx.shadowBlur = 5;
 		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.fillRect(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+		ctx.shadowBlur = 0;
 	}
 };

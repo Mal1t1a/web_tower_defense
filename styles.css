@@ -54,6 +54,7 @@ button
 	cursor: pointer;
 	width: 175px;
 	position: relative;
+	transition: all 0.25s ease;
 }
 
 button:hover
@@ -61,7 +62,7 @@ button:hover
 	background-color: #444;
 }
 
-button.inactive
+button.inactive, button:disabled
 {
 	opacity: 0.5;
 	cursor: not-allowed;
@@ -231,6 +232,14 @@ button.held #holdToAutoStart
 	animation-fill-mode: forwards, forwards, forwards;
 }
 
+#editorUI
+{
+    display: none;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 5px;
+	padding: 25px;
+}
 
 @keyframes grow
 {

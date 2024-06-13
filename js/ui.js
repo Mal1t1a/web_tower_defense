@@ -1,8 +1,28 @@
 import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower, autoStartWave, setAutoStartWave, sellTower, waveActive } from "./gameState.js";
-import { handleBuildTowerClick } from "./eventHandlers.js";
+import { handleBuildTowerClick, handlePageKeyDown, handlePageKeyUp } from "./eventHandlers.js";
 
 export const canvas = document.getElementById('gameCanvas');
 export const ctx = canvas.getContext('2d');
+
+export const gameUI = document.getElementById('gameUI');
+export const editorUI = document.getElementById('editorUI');
+export const editorControls = document.getElementById('editorControls');
+export const pathControls = document.getElementById('pathControls');
+export const selectionControls = document.getElementById('selectionControls');
+
+export const btnSavePath = document.getElementById('btnSavePath');
+export const btnLoadPath = document.getElementById('btnLoadPath');
+export const btnExportPath = document.getElementById('btnExportPath');
+export const btnImportPath = document.getElementById('btnImportPath');
+
+export const btnAddPointStart = document.getElementById('btnAddPointStart');
+export const btnAddPointEnd = document.getElementById('btnAddPointEnd');
+export const btnClearPath = document.getElementById('btnClearPath');
+
+export const btnAddPointBefore = document.getElementById('btnAddPointBefore');
+export const btnAddPointAfter = document.getElementById('btnAddPointAfter');
+export const btnDeletePoint = document.getElementById('btnDeletePoint');
+
 export const txtScore = document.getElementById('txtScore');
 export const txtWave = document.getElementById('txtWave');
 export const txtLives = document.getElementById('txtLives');
@@ -79,6 +99,9 @@ btnBuildIceTower.addEventListener('click', () => handleBuildTowerClick('ice'));
 btnBuildFireTower.addEventListener('click', () => handleBuildTowerClick('fire'));
 btnBuildLightningTower.addEventListener('click', () => handleBuildTowerClick('lightning'));
 btnBuildSniperTower.addEventListener('click', () => handleBuildTowerClick('sniper'));
+
+window.addEventListener('keydown', handlePageKeyDown);
+window.addEventListener('keyup', handlePageKeyUp);
 
 export function updateScore(score)
 {

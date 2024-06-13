@@ -1,3 +1,4 @@
+
 export class Projectile
 {
 	constructor(x, y, target, color)

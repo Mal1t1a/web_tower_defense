@@ -1,8 +1,9 @@
-import { Enemy } from './Enemy.js';
-import { path } from './Path.js';
+import { path01, path02, path03, path04 } from './paths/index.js';
 import { EventEmitter } from './eventEmitter.js';
-import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton, setUpgradeButtonText, showSellTowerButton, hideSellTowerButton, setSellTowerButtonText, showBuildMenu } from './ui.js';
+import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton, setUpgradeButtonText, showSellTowerButton, hideSellTowerButton, setSellTowerButtonText, showBuildMenu, hideBuildMenu, editorUI, gameUI } from './ui.js';
 import { CircleParticle, SquareParticle, TextParticle } from './particles/index.js';
+import { BasicEnemy, BossEnemy, FastEnemy } from './enemies/index.js';
+import { isOnPath, isOccupied } from './eventHandlers.js';
 
 export const towers = [];
 export const enemies = [];
@@ -23,9 +24,47 @@ export let selectedX = null;
 export let selectedY = null;
 export let showPathIndicator = true;
 export let autoStartWave = false;
+export let currentPath = path03;
+export let waveIsActivating = false;
+export let waveIsDeactivating = false;
+export let difficulty = 1;
+export let isPathEditing = false;
+export let gridSize = 40;
+
+export let selectedRNGPath = RandomNumber(1, 4);
+for (var i = 0; i < 10; i++)
+{
+	selectedRNGPath = RandomNumber(1, 4);
+}
+
+switch (selectedRNGPath)
+{
+	case 1:
+		currentPath = path01;
+		break;
+	case 2:
+		currentPath = path02;
+		break;
+	case 3:
+		currentPath = path03;
+		break;
+	case 4:
+		currentPath = path04;
+		break;
+}
+
+export function RandomNumber(min, max)
+{
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 export async function startWave()
 {
+	if (waveActive || waveIsActivating || waveIsDeactivating || gameOver)
+	{
+		return;
+	}
+	waveIsActivating = true;
 	waveNumber++;
 	enemiesPerWave += 2;
 	enemiesSpawned = 0;
@@ -43,9 +82,10 @@ export async function startWave()
 	updateLives(lives);
 	await setActiveWaveUI();
 	waveActive = true;
+	waveIsActivating = false;
 };
 
-export function endWave()
+export async function endWave()
 {
 	waveActive = false;
 	if (autoStartWave)
@@ -54,7 +94,9 @@ export function endWave()
 	}
 	else
 	{
-		setInactiveWaveUI();
+		waveIsDeactivating = true;
+		await setInactiveWaveUI();
+		waveIsDeactivating = false;
 	}
 };
 
@@ -84,25 +126,42 @@ export function addEnemy(deltaTime)
 		}
 		if (enemySpawnTimer <= 0)
 		{
-			const type = Math.random() > 0.5 ? 'basic' : 'fast';
-			let speed = type === 'basic' ? 100 : 200;
+			//rng between 1 and 2
+			const rngEnemy = Math.floor(Math.random() * 2) + 1;
+			let enemy = null;
 			let healthMultiplier = waveNumber; // Increase health with each wave
-			const enemy = new Enemy(path, speed, type);
-			if (waveNumber % 5 === 0 && enemiesSpawned >= enemiesPerWave-1)
+
+			switch (rngEnemy)
 			{
-				healthMultiplier *= 2;
-				enemy.color = { r: 255, g: 255, b: 0, a: 1 };
+				case 1:
+					enemy = new BasicEnemy({ path: currentPath });
+					break;
+				case 2:
+					enemy = new FastEnemy({ path: currentPath });
+					break;
 			}
+
+			if (waveNumber % 5 === 0)
+			{
+				let bossWaveNumber = waveNumber / 5;
+				if (enemiesSpawned >= enemiesPerWave - bossWaveNumber)
+				{
+					enemy = new BossEnemy({ path: currentPath });
+					healthMultiplier *= 3;
+				}
+			}
+
 			enemy.health *= healthMultiplier;
 			enemy.maxHealth *= healthMultiplier;
 			enemy.bounty += waveNumber - 1;
 			enemies.push(enemy);
-			retObj = enemy;
+
 			enemiesSpawned++;
 			enemySpawnTimer = 1 / enemySpawnRate;
+
+			retObj = enemy;
 		}
 	}
-
 	if (enemiesSpawned >= enemiesPerWave && enemies.length === 0 && waveActive)
 	{
 		endWave();
@@ -144,11 +203,11 @@ export function decreaseLives(amount)
 	updateLives(lives);
 	if (amount > 1)
 	{
-		textParticle(400, 300, `-${amount} Lives`, {r: 255, g: 0, b: 0}, 50, 2, '48px Arial');
+		textParticle(400, 300, `-${amount} Lives`, { r: 255, g: 0, b: 0 }, 50, 2, '48px Arial');
 	}
 	else
 	{
-		textParticle(400, 300, `-${amount} Life`, {r: 255, g: 0, b: 0}, 50, 2, '48px Arial');
+		textParticle(400, 300, `-${amount} Life`, { r: 255, g: 0, b: 0 }, 50, 2, '48px Arial');
 	}
 };
 
@@ -178,6 +237,11 @@ export function resetGame()
 	selectedY = null;
 	showPathIndicator = true;
 	autoStartWave = false;
+	waveIsActivating = false;
+	waveIsDeactivating = false;
+	difficulty = 1;
+	isPathEditing = false;
+	gridSize = 40;
 
 	updateScore(score);
 	updateWave(waveNumber);
@@ -200,8 +264,32 @@ export function setMousePosition(x, y)
 
 export function setSelectedPosition(x, y)
 {
+	if (selectedX === x && selectedY === y)
+	{
+		hideBuildMenu();
+		checkShowSellTowerButton();
+		checkShowUpgradeButton();
+		selectedX = null;
+		selectedY = null;
+		return;
+	}
 	selectedX = x;
 	selectedY = y;
+
+	if (isOnPath(x, y))
+	{
+		hideBuildMenu();
+	}
+	else if (isOccupied(x, y))
+	{
+		hideBuildMenu();
+	}
+	else
+	{
+		showBuildMenu();
+	}
+	checkShowSellTowerButton();
+	checkShowUpgradeButton();
 };
 
 export function setShowPathIndicator(value)
@@ -300,4 +388,26 @@ export function checkShowSellTowerButton()
 export function setAutoStartWave(value)
 {
 	autoStartWave = value;
+};
+
+export function setEnemyPath(newPath)
+{
+	currentPath = newPath;
+};
+
+export function setDifficulty(value)
+{
+	difficulty = value;
+};
+
+export function setPathEditing(value)
+{
+	isPathEditing = value;
+	editorUI.style.display = value ? 'flex' : 'none';
+	gameUI.style.display = value ? 'none' : 'block';
+};
+
+export function setGridSize(value)
+{
+	gridSize = value;
 };
