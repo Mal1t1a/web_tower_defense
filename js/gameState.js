@@ -4,6 +4,13 @@ import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, 
 import { CircleParticle, SquareParticle, TextParticle } from './particles/index.js';
 import { BasicEnemy, BossEnemy, FastEnemy } from './enemies/index.js';
 import { isOnPath, isOccupied } from './eventHandlers.js';
+import * as paths from './paths/index.js';
+
+function getRandomPathName()
+{
+	const pathKeys = Object.keys(paths);
+	return pathKeys[Math.floor(Math.random() * pathKeys.length)];
+}
 
 export const towers = [];
 export const enemies = [];
@@ -24,40 +31,16 @@ export let selectedX = null;
 export let selectedY = null;
 export let showPathIndicator = true;
 export let autoStartWave = false;
-export let currentPath = path03;
+export let currentPathName = getRandomPathName();
+export let currentPath = paths[currentPathName];
 export let waveIsActivating = false;
 export let waveIsDeactivating = false;
 export let difficulty = 1;
 export let isPathEditing = false;
 export let gridSize = 40;
 export let showGlow = true;
-
-export let selectedRNGPath = RandomNumber(1, 4);
-for (var i = 0; i < 10; i++)
-{
-	selectedRNGPath = RandomNumber(1, 4);
-}
-
-switch (selectedRNGPath)
-{
-	case 1:
-		currentPath = path01;
-		break;
-	case 2:
-		currentPath = path02;
-		break;
-	case 3:
-		currentPath = path03;
-		break;
-	case 4:
-		currentPath = path04;
-		break;
-}
-
-export function RandomNumber(min, max)
-{
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+export let isPaused = false;
+export let speedMultiplier = 1;
 
 export async function startWave()
 {
@@ -243,7 +226,9 @@ export function resetGame()
 	difficulty = 1;
 	isPathEditing = false;
 	gridSize = 40;
-
+	showGlow = true;
+	isPaused = false;
+	
 	updateScore(score);
 	updateWave(waveNumber);
 	updateCurrency(currency);
@@ -418,3 +403,12 @@ export function setShowGlow(value)
 	showGlow = value;
 };
 
+export function setPaused(value)
+{
+	isPaused = value;
+};
+
+export function setSpeedMultiplier(value)
+{
+	speedMultiplier = value;
+};

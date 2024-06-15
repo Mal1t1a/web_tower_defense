@@ -1,5 +1,5 @@
-import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower, autoStartWave, setAutoStartWave, sellTower, waveActive, setShowGlow, showGlow } from "./gameState.js";
-import { handleBuildTowerClick, handlePageKeyDown, handlePageKeyUp } from "./eventHandlers.js";
+import { resetGame, startWave, currency, waveNumber, setShowPathIndicator, upgradeTower, autoStartWave, setAutoStartWave, sellTower, waveActive, setShowGlow, showGlow, setSpeedMultiplier } from "./gameState.js";
+import { handleBuildTowerClick, handleButtonResetGameCancelClick, handleButtonResetGameClick, handleButtonResetGameConfirmClick, handleButtonStartWaveEvents, handleButtonStopAutoWaveClick, handleButtonToggleGlowClick, handleCloseSettingsButtonClick, handlePageKeyDown, handlePageKeyUp, handleSettingsButtonClick } from "./eventHandlers.js";
 
 export const canvas = document.getElementById('gameCanvas');
 export const ctx = canvas.getContext('2d');
@@ -53,91 +53,33 @@ export const btnBuildFireTower = document.getElementById('btnBuildFireTower');
 export const btnBuildLightningTower = document.getElementById('btnBuildLightningTower');
 export const btnBuildSniperTower = document.getElementById('btnBuildSniperTower');
 
+export const speeds = document.getElementById('speeds');
+
+export let holdTimeHwnd = 0;
+export let holdTimeStart = 0;
+export let autoStartTicks = 0;
+
 canvas.width = 800;
 canvas.height = 600;
-let holdTimeHwnd = 0;
-let autoStartTicks = 0;
 
-btnResetGame.addEventListener('click', () =>
+for (let i = 0; i < speeds.children.length; i++)
 {
-	btnResetGame.style.display = 'none';
-	confirmReset.style.display = 'block';
-});
-btnResetGameConfirm.addEventListener('click', () =>
-{
-	btnResetGame.style.display = 'block';
-	confirmReset.style.display = 'none';
-	settingsUI.style.display = 'none';
-	resetGame();
-});
-btnResetGameCancel.addEventListener('click', () =>
-{
-	btnResetGame.style.display = 'block';
-	confirmReset.style.display = 'none';
-});
-btnToggleGlow.addEventListener('click', () =>
-{
-	setShowGlow(!showGlow);
-	if (!showGlow)
-	{
-		btnToggleGlow.textContent = 'Enable Glow Effect';
-	}
-	else
-	{
-		btnToggleGlow.textContent = 'Disable Glow Effect';
-	}
-});
-btnCloseSettings.addEventListener('click', () =>
-{
-	settingsUI.style.display = 'none';
-});
+	let btnSpeed = speeds.children[i];
+	btnSpeed.addEventListener('click', () => setSpeedMultiplier(btnSpeed.dataset.speed));
+}
 
-btnStartWave.addEventListener('click', startWave);
-btnStopAutoWave.addEventListener('click', () =>
-{
-	setAutoStartWave(false);
-	btnStartWave.style.display = 'block';
-	btnStopAutoWave.style.display = 'none';
-});
-btnStartWave.addEventListener('mousedown', () =>
-{
-	btnStartWave.classList.add('held');
-	holdTimeHwnd = setInterval(() =>
-	{
-		autoStartTicks++;
-		if (autoStartTicks >= 3)
-		{
-			setAutoStartWave(true);
-			btnStartWave.style.display = 'none';
-			btnStopAutoWave.style.display = 'block';
-			btnStartWave.querySelector('#text').textContent = 'Start Wave';
-			if (!waveActive)
-			{
-				startWave();
-			}
-			clearInterval(holdTimeHwnd);
-		}
-		else
-		{
-			btnStartWave.querySelector('#text').textContent = `Auto Start in ${3 - autoStartTicks}`;
-		}
-	}, 1000);
+btnResetGame.addEventListener('click', handleButtonResetGameClick);
+btnResetGameConfirm.addEventListener('click', handleButtonResetGameConfirmClick);
+btnResetGameCancel.addEventListener('click', handleButtonResetGameCancelClick);
+btnToggleGlow.addEventListener('click', handleButtonToggleGlowClick);
 
-	window.addEventListener('mouseup', () =>
-	{
-		btnStartWave.classList.remove('held');
-		autoStartTicks = 0;
-		clearInterval(holdTimeHwnd);
-		btnStartWave.querySelector('#text').textContent = 'Start Wave';
-		window.removeEventListener('mouseup', null);
-	});
-});
+btnStartWave.addEventListener('mousedown', handleButtonStartWaveEvents);
+btnStartWave.addEventListener('touchstart', handleButtonStartWaveEvents);
+btnStopAutoWave.addEventListener('click', handleButtonStopAutoWaveClick);
 btnUpgradeTower.addEventListener('click', upgradeTower);
 btnSellTower.addEventListener('click', sellTower);
-btnSettings.addEventListener('click', () =>
-{
-	settingsUI.style.display = 'block';
-});
+btnSettings.addEventListener('click', handleSettingsButtonClick);
+btnCloseSettings.addEventListener('click', handleCloseSettingsButtonClick);
 
 btnBuildArrowTower.addEventListener('click', () => handleBuildTowerClick('arrow'));
 btnBuildCannonTower.addEventListener('click', () => handleBuildTowerClick('cannon'));
@@ -277,4 +219,19 @@ export function setSellTowerButtonText(cost)
 		return;
 	}
 	btnSellTower.textContent = `Sell Tower (${cost})`;
+};
+
+export function setHoldTimeStart(time)
+{
+	holdTimeStart = time;
+};
+
+export function setHoldTimeHwnd(time)
+{
+	holdTimeHwnd = time;
+};
+
+export function setAutoStartTicks(ticks)
+{
+	autoStartTicks = ticks;
 };

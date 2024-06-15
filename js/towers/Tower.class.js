@@ -1,6 +1,6 @@
 import { Projectile } from './projectiles/Projectile.class.js';
 import { EventEmitter } from '../eventEmitter.js';
-import { particleExplosion } from '../gameState.js';
+import { particleExplosion, showGlow } from '../gameState.js';
 
 export class Tower extends EventEmitter
 {
@@ -28,6 +28,11 @@ export class Tower extends EventEmitter
 
 	draw(ctx)
 	{
+		if (showGlow)
+		{
+			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
+			ctx.shadowBlur = 10;
+		}
 		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
 
@@ -38,7 +43,8 @@ export class Tower extends EventEmitter
 		ctx.textBaseline = 'middle';
 		ctx.fillText(this.level, this.x, this.y + 2);
 
-		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
+		// ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
+		ctx.shadowBlur = 0;
 	}
 
 	shoot(enemies, deltaTime)

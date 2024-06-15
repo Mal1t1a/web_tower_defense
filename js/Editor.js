@@ -2,7 +2,7 @@ import { EventEmitter } from "./eventEmitter.js";
 import { clearCanvas } from "./drawing.js";
 import { ctx, canvas, selectionControls, btnAddPointStart, btnAddPointEnd, btnAddPointBefore, btnAddPointAfter, btnDeletePoint, btnClearPath, btnExportPath } from './ui.js';
 import { PathIndicator } from './PathIndicator.js';
-import { currentPath, gridSize, mouseX, mouseY, selectedX, selectedY, setMousePosition, setSelectedPosition } from './gameState.js';
+import { currentPath, currentPathName, gridSize, mouseX, mouseY, selectedX, selectedY, setMousePosition, setSelectedPosition, showGlow } from './gameState.js';
 // setInterval(editor.update.bind(editor), FRAME_DURATION);
 // requestAnimationFrame(editor.render.bind(editor));
 export class Editor extends EventEmitter
@@ -29,7 +29,7 @@ export class Editor extends EventEmitter
 					...
 				];
 			*/
-			var pathString = 'export const path04 = [\n';
+			var pathString = `export const ${currentPathName} = [\n`;
 			for (let i = 0; i < currentPath.length; i++)
 			{
 				pathString += `\t{ x: ${currentPath[i].x}, y: ${currentPath[i].y} },\n`;
@@ -38,7 +38,7 @@ export class Editor extends EventEmitter
 			//download as .js
 			var element = document.createElement('a');
 			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(pathString));
-			element.setAttribute('download', 'Path04.js');
+			element.setAttribute('download', `${currentPathName}.js`);
 			element.style.display = 'none';
 			document.body.appendChild(element);
 			element.click();
@@ -88,13 +88,29 @@ export class Editor extends EventEmitter
 	{
 		ctx.lineWidth = 1;
 
-		for (let x = 0; x <= canvas.width; x += gridSize)
+		for (let x = 0; x <= canvas.width; x += gridSize * 2)
 		{
 			ctx.moveTo(x, 0);
 			ctx.lineTo(x, canvas.height);
 		}
 
-		for (let y = 0; y <= canvas.height; y += gridSize)
+		for (let y = 0; y <= canvas.height; y += gridSize * 2)
+		{
+			ctx.moveTo(0, y);
+			ctx.lineTo(canvas.width, y);
+		}
+
+		ctx.strokeStyle = '#1a1a1a';
+		ctx.lineWidth = 1;
+		ctx.stroke();
+
+		for (let x = gridSize; x <= canvas.width; x += gridSize * 2)
+		{
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, canvas.height);
+		}
+
+		for (let y = gridSize; y <= canvas.height; y += gridSize * 2)
 		{
 			ctx.moveTo(0, y);
 			ctx.lineTo(canvas.width, y);

@@ -20,8 +20,33 @@ export function drawGrid(ctx, canvasWidth, canvasHeight)
 	ctx.stroke();
 }
 
+let shadowBlurGlow = 0;
+let shadowBlurGlowStep = 0.05;
+let increasing = true;
+
 export function drawPath(ctx, path)
 {
+	if (showGlow)
+	{
+		ctx.shadowColor = 'white';
+		if (increasing)
+		{
+			shadowBlurGlow += shadowBlurGlowStep;
+			if (shadowBlurGlow >= 10)
+			{
+				increasing = false;
+			}
+		}
+		else
+		{
+			shadowBlurGlow -= shadowBlurGlowStep;
+			if (shadowBlurGlow <= 0)
+			{
+				increasing = true;
+			}
+		}
+		ctx.shadowBlur = shadowBlurGlow;
+	}
 	ctx.beginPath();
 	ctx.moveTo(path[0].x, path[0].y);
 	for (let i = 1; i < path.length; i++)
@@ -32,6 +57,7 @@ export function drawPath(ctx, path)
 	ctx.lineWidth = 3;
 	ctx.stroke();
 	ctx.lineWidth = 1; // Reset to default
+	ctx.shadowBlur = 0;
 
 	// Draw path width for better visualization
 	ctx.beginPath();
@@ -40,48 +66,10 @@ export function drawPath(ctx, path)
 	{
 		ctx.lineTo(path[i].x, path[i].y);
 	}
-	ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+	ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
 	ctx.lineWidth = 20; // Path width
 	ctx.stroke();
 	ctx.lineWidth = 1; // Reset to default
-
-	if (isPathEditing)
-	{
-		//draw path points
-		ctx.fillStyle = 'white';
-		for (let i = 0; i < path.length; i++)
-		{
-			ctx.fillStyle = 'white';
-			//check if mouseX and mouseY are not null and are within the path point
-
-			if (selectedX !== null && selectedY !== null && selectedX > path[i].x - 10 && selectedX < path[i].x + 10 && selectedY > path[i].y - 10 && selectedY < path[i].y + 10)
-			{
-				if (showGlow)
-				{
-					ctx.shadowColor = 'yellow';
-					ctx.shadowBlur = 10;
-				}
-				ctx.fillStyle = 'yellow';
-			}
-			else if (mouseX !== null && mouseY !== null && mouseX > path[i].x - 10 && mouseX < path[i].x + 10 && mouseY > path[i].y - 10 && mouseY < path[i].y + 10)
-			{
-				if (showGlow)
-				{
-					ctx.shadowColor = 'cyan';
-					ctx.shadowBlur = 10;
-				}
-				ctx.fillStyle = 'cyan';
-			}
-			ctx.beginPath();
-			ctx.arc(path[i].x, path[i].y, 5, 0, 2 * Math.PI);
-			ctx.fill();
-
-			if (showGlow)
-			{
-				ctx.shadowBlur = 0;
-			}
-		}
-	}
 }
 
 export function clearCanvas()
@@ -93,14 +81,26 @@ export function clearCanvas()
 
 export function drawGhostedTower(x, y, color)
 {
-	ctx.fillStyle = color;
+	if (showGlow)
+	{
+		ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
+		ctx.shadowBlur = 10;
+	}
+	ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 	ctx.fillRect(x - (gridSize / 2), y - (gridSize / 2), gridSize, gridSize);
+	ctx.shadowBlur = 0;
 }
 
 export function drawSelection(x, y, color)
 {
-	ctx.strokeStyle = color;
+	if (showGlow)
+	{
+		ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
+		ctx.shadowBlur = 10;
+	}
+	ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
 	ctx.lineWidth = 2;
 	ctx.strokeRect(x - (gridSize / 2), y - (gridSize / 2), gridSize, gridSize);
 	ctx.lineWidth = 1; // Reset to default
+	ctx.shadowBlur = 0;
 }

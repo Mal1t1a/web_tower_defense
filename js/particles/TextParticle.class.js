@@ -23,7 +23,7 @@ export class TextParticle extends Particle
 	{
 		if (showGlow)
 		{
-			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
+			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
 			ctx.shadowBlur = 15;
 		}
 		
@@ -31,10 +31,7 @@ export class TextParticle extends Particle
 		ctx.font = this.font;
 		ctx.textAlign = this.textAlign;
 		ctx.fillText(this.text, this.x, this.y);
-		
-		if (showGlow)
-		{
-			ctx.shadowBlur = 0;
-		}
+
+		ctx.shadowBlur = 0;
 	}
 };

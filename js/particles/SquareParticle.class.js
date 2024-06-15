@@ -12,16 +12,13 @@ export class SquareParticle extends Particle
 	{
 		if (showGlow)
 		{
-			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
-			ctx.shadowBlur = 5;
+			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
+			ctx.shadowBlur = 10;
 		}
 		
 		ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 		ctx.fillRect(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
 
-		if (showGlow)
-		{
-			ctx.shadowBlur = 0;
-		}
+		ctx.shadowBlur = 0;
 	}
 };

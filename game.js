@@ -1,5 +1,5 @@
 import { drawGrid, drawPath, clearCanvas, drawGhostedTower, drawSelection } from './js/drawing.js';
-import { towers, enemies, particles, enemySpawnTimer, score, lives, gameOver, waveNumber, enemiesPerWave, enemiesSpawned, waveActive, currency, startWave, addEnemy, resetGame, increaseScore, increaseCurrency, decreaseCurrency, setGameOver, decreaseLives, mouseX, mouseY, selectedX, selectedY, setMousePosition, showPathIndicator, setPathEditing, setGridSize, currentPath, isPathEditing, showGlow } from './js/gameState.js';
+import { towers, enemies, particles, enemySpawnTimer, score, lives, gameOver, waveNumber, enemiesPerWave, enemiesSpawned, waveActive, currency, startWave, addEnemy, resetGame, increaseScore, increaseCurrency, decreaseCurrency, setGameOver, decreaseLives, mouseX, mouseY, selectedX, selectedY, setMousePosition, showPathIndicator, setPathEditing, setGridSize, currentPath, isPathEditing, showGlow, isPaused, setPaused, speedMultiplier } from './js/gameState.js';
 import { handleCanvasClick, isOccupied, isOnPath, handleCanvasMouseMove } from './js/eventHandlers.js';
 import { ctx, canvas } from './js/ui.js';
 import { PathIndicator } from './js/PathIndicator.js';
@@ -8,17 +8,16 @@ import { Editor } from './js/Editor.js';
 const pathIndicators = [
 	new PathIndicator({ path: currentPath, offset: 0 }),
 	new PathIndicator({ path: currentPath, offset: 4 }),
-	new PathIndicator({ path: currentPath, offset: 14 }),
-	new PathIndicator({ path: currentPath, offset: 19 }),
+	new PathIndicator({ path: currentPath, offset: 9 }),
+	new PathIndicator({ path: currentPath, offset: 13 }),
 ];
 
 const FPS = 60;
 const FRAME_DURATION = 1000 / FPS;
-let speedMultiplier = 1;
 
 function updateGameLogic(deltaTime)
 {
-	if (gameOver)
+	if (gameOver || isPaused)
 	{
 		return;
 	}
@@ -102,7 +101,7 @@ function renderGame()
 	{
 		if (mouseX !== null && mouseY !== null)
 		{
-			drawGhostedTower(mouseX, mouseY, 'rgba(255, 255, 255, 0.25)');
+			drawGhostedTower(mouseX, mouseY, { r: 255, g: 255, b: 255, a: 0.25 });
 		}
 	}
 	else
@@ -111,15 +110,15 @@ function renderGame()
 		{
 			if (isOnPath(mouseX, mouseY))
 			{
-				drawGhostedTower(mouseX, mouseY, 'rgba(255, 0, 0, 0.5)');
+				drawGhostedTower(mouseX, mouseY, { r: 255, g: 0, b: 0, a: 0.5 });
 			}
 			else if (isOccupied(mouseX, mouseY))
 			{
-				drawGhostedTower(mouseX, mouseY, 'rgba(0, 125, 255, 0.15)');
+				drawGhostedTower(mouseX, mouseY, { r: 0, g: 125, b: 255, a: 0.15 });
 			}
 			else
 			{
-				drawGhostedTower(mouseX, mouseY, 'rgba(255, 255, 255, 0.25)');
+				drawGhostedTower(mouseX, mouseY, { r: 255, g: 255, b: 255, a: 0.25 });
 			}
 		}
 	
@@ -127,33 +126,16 @@ function renderGame()
 		{
 			if (!isOccupied(selectedX, selectedY) && !isOnPath(selectedX, selectedY))
 			{
-				if (showGlow)
-				{
-					ctx.shadowColor = `rgba(0, 125, 255, 1)`;
-					ctx.shadowBlur = 5;
-				}
-				drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
-				if (showGlow)
-				{
-					ctx.shadowBlur = 0;
-				}
+				// drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
+				drawSelection(selectedX, selectedY, { r: 0, g: 125, b: 255, a: 0.5 });
 			}
 			else if (isOnPath(selectedX, selectedY))
 			{
-				drawGhostedTower(selectedX, selectedY, 'rgba(255, 0, 0, 0.5)');
+				drawGhostedTower(selectedX, selectedY, { r: 255, g: 0, b: 0, a: 0.5 });
 			}
 			else if (isOccupied(selectedX, selectedY))
 			{
-				if (showGlow)
-				{
-					ctx.shadowColor = `rgba(0, 125, 255, 1)`;
-					ctx.shadowBlur = 5;
-				}
-				drawSelection(selectedX, selectedY, 'rgba(0, 125, 255, 0.5)');
-				if (showGlow)
-				{
-					ctx.shadowBlur = 0;
-				}
+				drawSelection(selectedX, selectedY, { r: 0, g: 125, b: 255, a: 0.5 });
 			}
 		}
 	}

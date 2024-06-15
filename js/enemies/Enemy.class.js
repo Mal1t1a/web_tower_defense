@@ -44,7 +44,7 @@ export class Enemy extends EventEmitter
 
 	draw(ctx)
 	{
-		if (this.glow && showGlow)
+		if (showGlow)
 		{
 			ctx.shadowColor = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
 			ctx.shadowBlur = 15;
@@ -63,17 +63,14 @@ export class Enemy extends EventEmitter
 			ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
 		}
 
-		if (this.glow && showGlow)
-		{
-			ctx.shadowBlur = 0;
-		}
+		ctx.shadowBlur = 0;
 
 		// Draw health bar background
 		ctx.fillStyle = 'rgba(125, 0, 0, 1)';
 		ctx.fillRect(this.x - 10, this.y - 20, 20, 5);
 		
 		// Draw health bar
-		ctx.fillStyle = 'green';
+		ctx.fillStyle = 'rgba(0, 255, 0, 1)';
 		ctx.fillRect(this.x - 10, this.y - 20, 20 * (this.health / this.maxHealth), 5);
 	}
 

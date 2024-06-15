@@ -1,5 +1,5 @@
-import { towers, currency, decreaseCurrency, startWave, setMousePosition, setSelectedPosition, mouseX, mouseY, selectedX, selectedY, checkShowUpgradeButton, checkShowSellTowerButton, sellTower, upgradeTower, resetGame, isPathEditing, gridSize, currentPath } from './gameState.js';
-import { showBuildMenu, hideBuildMenu, hideUpgradeButton, showUpgradeButton, canvas } from './ui.js';
+import { towers, currency, decreaseCurrency, startWave, setMousePosition, setSelectedPosition, mouseX, mouseY, selectedX, selectedY, checkShowUpgradeButton, checkShowSellTowerButton, sellTower, upgradeTower, resetGame, isPathEditing, gridSize, currentPath, setAutoStartWave, waveActive, setPaused, setShowGlow, showGlow } from './gameState.js';
+import { showBuildMenu, hideBuildMenu, hideUpgradeButton, showUpgradeButton, canvas, settingsUI, btnStartWave, holdTimeStart, holdTimeHwnd, setHoldTimeStart, setHoldTimeHwnd, setAutoStartTicks, btnStopAutoWave, autoStartTicks, btnResetGame, confirmReset, btnToggleGlow } from './ui.js';
 import { ArrowTower, CannonTower, IceTower, FireTower, LightningTower, SniperTower } from './towers/index.js';
 
 export function isOnPath(x, y)
@@ -72,7 +72,7 @@ export function handleBuildTowerClick(type)
 
 	if (isOnPath(selectedX, selectedY))
 	{
-		return;	
+		return;
 	}
 
 	if (isOccupied(selectedX, selectedY))
@@ -125,58 +125,58 @@ function handleGameKeyDown(event)
 			{
 				setSelectedPosition(selectedX - gridSize, selectedY);
 			}
-		break;
+			break;
 		case 38: // up
 			if (selectedX !== null && selectedY !== null && selectedY - gridSize >= 0)
 			{
 				setSelectedPosition(selectedX, selectedY - gridSize);
 			}
-		break;
+			break;
 		case 39: // right
 			if (selectedX !== null && selectedY !== null && selectedX + gridSize < canvas.width)
 			{
 				setSelectedPosition(selectedX + gridSize, selectedY);
 			}
-		break;
+			break;
 		case 40: // down
 			if (selectedX !== null && selectedY !== null && selectedY + gridSize < canvas.height)
 			{
 				setSelectedPosition(selectedX, selectedY + gridSize);
 			}
-		break;
+			break;
 		case 49: // 1
 			handleBuildTowerClick('arrow');
-		break;
+			break;
 		case 50: // 2
 			handleBuildTowerClick('cannon');
-		break;
+			break;
 		case 51: // 3
 			handleBuildTowerClick('ice');
-		break;
+			break;
 		case 52: // 4
 			handleBuildTowerClick('fire');
-		break;
+			break;
 		case 53: // 5
 			handleBuildTowerClick('lightning');
-		break;
+			break;
 		case 54: // 6
 			handleBuildTowerClick('sniper');
-		break;
+			break;
 		case 32: // space
 			startWave();
-		break;
+			break;
 		case 81: // q
 			// upgradeTower();
-		break;
+			break;
 		case 82: // r
 			resetGame();
-		break;
+			break;
 		case 83: // s
 			sellTower();
-		break;
+			break;
 		case 87:
 			upgradeTower();
-		break;
+			break;
 	}
 }
 
@@ -190,25 +190,25 @@ function handleEditorKeyDown(event)
 			{
 				setSelectedPosition(selectedX - gridSize, selectedY);
 			}
-		break;
+			break;
 		case 38: // up
 			if (selectedX !== null && selectedY !== null && selectedY - gridSize >= 0)
 			{
 				setSelectedPosition(selectedX, selectedY - gridSize);
 			}
-		break;
+			break;
 		case 39: // right
 			if (selectedX !== null && selectedY !== null && selectedX + gridSize < canvas.width)
 			{
 				setSelectedPosition(selectedX + gridSize, selectedY);
 			}
-		break;
+			break;
 		case 40: // down
 			if (selectedX !== null && selectedY !== null && selectedY + gridSize < canvas.height)
 			{
 				setSelectedPosition(selectedX, selectedY + gridSize);
 			}
-		break;
+			break;
 		default:
 			break;
 	}
@@ -228,5 +228,102 @@ export function handlePageKeyDown(event)
 
 export function handlePageKeyUp(event)
 {
-	
+
+};
+
+export function handleSettingsButtonClick(event)
+{
+	settingsUI.style.display = 'block';
+	setPaused(true);
+};
+
+export function handleCloseSettingsButtonClick(event)
+{
+	settingsUI.style.display = 'none';
+	setPaused(false);
+};
+
+export function handleButtonStopAutoWaveClick(event)
+{
+	setAutoStartWave(false);
+	btnStartWave.style.display = 'block';
+	btnStopAutoWave.style.display = 'none';
+};
+
+export function handleButtonStartWaveEvents(event)
+{
+	event.preventDefault();
+	setHoldTimeStart(new Date());
+	btnStartWave.classList.add('held');
+	setHoldTimeHwnd(setInterval(() =>
+	{
+		setAutoStartTicks(autoStartTicks + 1);
+		if (autoStartTicks >= 3)
+		{
+			setAutoStartWave(true);
+			btnStartWave.style.display = 'none';
+			btnStopAutoWave.style.display = 'block';
+			btnStartWave.querySelector('#text').textContent = 'Start Wave';
+			if (!waveActive)
+			{
+				startWave();
+			}
+			clearInterval(holdTimeHwnd);
+		}
+		else
+		{
+			btnStartWave.querySelector('#text').textContent = `Auto Start in ${3 - autoStartTicks}`;
+		}
+	}, 1000));
+
+	function mouseTouchUp(event)
+	{
+		var diff = (new Date()).getTime() - holdTimeStart.getTime();
+		if (diff < 1000)
+		{
+			startWave();
+		}
+		btnStartWave.classList.remove('held');
+		setAutoStartTicks(0);
+		clearInterval(holdTimeHwnd);
+		btnStartWave.querySelector('#text').textContent = 'Start Wave';
+		window.removeEventListener('mouseup', mouseTouchUp);
+		window.removeEventListener('touchend', mouseTouchUp);
+	}
+
+	window.addEventListener('mouseup', mouseTouchUp);
+	window.addEventListener('touchend', mouseTouchUp);
+};
+
+export function handleButtonResetGameClick(event)
+{
+	btnResetGame.style.display = 'none';
+	confirmReset.style.display = 'block';
+};
+
+export function handleButtonResetGameConfirmClick(event)
+{
+	btnResetGame.style.display = 'block';
+	confirmReset.style.display = 'none';
+	settingsUI.style.display = 'none';
+	resetGame();
+};
+
+export function handleButtonResetGameCancelClick(event)
+{
+	btnResetGame.style.display = 'block';
+	confirmReset.style.display = 'none';
+};
+
+export function handleButtonToggleGlowClick(event)
+{
+	setShowGlow(!showGlow);
+	if (!showGlow)
+	{
+		btnToggleGlow.textContent = 'Enable Glow Effect';
+	}
+	else
+	{
+		btnToggleGlow.textContent = 'Disable Glow Effect';
+	}
 };
