@@ -1,10 +1,10 @@
-import { path01, path02, path03, path04 } from './paths/index.js';
 import { EventEmitter } from './eventEmitter.js';
 import { updateScore, updateWave, updateLives, updateCurrency, setActiveWaveUI, setInactiveWaveUI, hideUpgradeButton, showUpgradeButton, setUpgradeButtonText, showSellTowerButton, hideSellTowerButton, setSellTowerButtonText, showBuildMenu, hideBuildMenu, editorUI, gameUI } from './ui.js';
 import { CircleParticle, SquareParticle, TextParticle } from './particles/index.js';
-import { BasicEnemy, BossEnemy, FastEnemy } from './enemies/index.js';
 import { isOnPath, isOccupied } from './eventHandlers.js';
+import * as enemyClasses from './enemies/index.js';
 import * as paths from './paths/index.js';
+import { RandomNumber } from './utils.js';
 
 function getRandomPathName()
 {
@@ -111,17 +111,19 @@ export function addEnemy(deltaTime)
 		if (enemySpawnTimer <= 0)
 		{
 			//rng between 1 and 2
-			const rngEnemy = Math.floor(Math.random() * 2) + 1;
+			const rngEnemy = RandomNumber(1, 3);
 			let enemy = null;
-			let healthMultiplier = waveNumber; // Increase health with each wave
 
 			switch (rngEnemy)
 			{
 				case 1:
-					enemy = new BasicEnemy({ path: currentPath });
+					enemy = new enemyClasses.BasicEnemy({ path: currentPath });
 					break;
 				case 2:
-					enemy = new FastEnemy({ path: currentPath });
+					enemy = new enemyClasses.FastEnemy({ path: currentPath });
+					break;
+				case 3:
+					enemy = new enemyClasses.TeleportEnemy({ path: currentPath });
 					break;
 			}
 
@@ -130,14 +132,10 @@ export function addEnemy(deltaTime)
 				let bossWaveNumber = waveNumber / 5;
 				if (enemiesSpawned >= enemiesPerWave - bossWaveNumber)
 				{
-					enemy = new BossEnemy({ path: currentPath });
-					healthMultiplier *= 3;
+					enemy = new enemyClasses.BossEnemy({ path: currentPath });
 				}
 			}
 
-			enemy.health *= healthMultiplier;
-			enemy.maxHealth *= healthMultiplier;
-			enemy.bounty += waveNumber - 1;
 			enemies.push(enemy);
 
 			enemiesSpawned++;

@@ -1,5 +1,5 @@
 import { EventEmitter } from '../eventEmitter.js';
-import { particleExplosion, textParticle, showGlow } from '../gameState.js';
+import { particleExplosion, textParticle, showGlow, waveNumber } from '../gameState.js';
 
 export class Enemy extends EventEmitter
 {
@@ -13,12 +13,13 @@ export class Enemy extends EventEmitter
 		this.currentPoint = 0;
 		this.x = path[0].x;
 		this.y = path[0].y;
-		this.color = {r: 255, g: 255, b: 255};
-		this.maxHealth = 1;
-		this.health = this.maxHealth;
+		this.color = {r: 255, g: 255, b: 255, a: 1 };
+
 		this.hasDied = false;
-		this.bounty = bounty;
-		this.glow = false;
+
+		this.maxHealth = 1 * waveNumber;
+		this.health = this.maxHealth;
+		this.bounty = bounty + (waveNumber - 1);
 	}
 
 	move(deltaTime)
@@ -53,13 +54,13 @@ export class Enemy extends EventEmitter
 		{
 			ctx.shadowColor = `rgba(0, 255, 255, 1)`;
 			ctx.shadowBlur = 10;
-			ctx.fillStyle = `rgba(${Math.min(255, this.color.r - 50)}, ${Math.min(255, this.color.g + 25)}, ${Math.min(255, this.color.b + 100)}, 1)`;
+			ctx.fillStyle = `rgba(${Math.min(255, this.color.r - 50)}, ${Math.min(255, this.color.g + 25)}, ${Math.min(255, this.color.b + 100)}, ${this.color.a})`;
 			ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
 			ctx.shadowBlur = 0;
 		}
 		else
 		{
-			ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`;
+			ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 			ctx.fillRect(this.x - 10, this.y - 10, 20, 20);
 		}
 
@@ -81,7 +82,7 @@ export class Enemy extends EventEmitter
 		if (this.health <= 0 && !this.hasDied)
 		{
 			particleExplosion(this.x, this.y, this.color, 10);
-			textParticle(this.x, this.y, `+${this.bounty}`, { r: 255, g: 215, b: 0 }, 50);
+			textParticle(this.x, this.y, `+${Math.round(this.bounty)}`, { r: 255, g: 215, b: 0 }, 50);
 			this.emit('death', this.bounty);
 			this.hasDied = true;
 		}

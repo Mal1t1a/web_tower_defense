@@ -5,7 +5,7 @@ export class BasicEnemy extends Enemy
 	constructor({path, bounty = 5})
 	{
 		super({path, speed: 100, type: 'basic', bounty});
-		this.color = {r: 255, g: 0, b: 0}; //red
+		this.color = {r: 255, g: 0, b: 0, a: 1}; //red
 		this.maxHealth = 3;
 		this.health = this.maxHealth;
 		

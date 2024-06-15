@@ -52,15 +52,15 @@ function updateGameLogic(deltaTime)
 		}
 		else if (enemy.health <= 0)
 		{
-			increaseScore(enemy.bounty); // Increase score when an enemy is defeated
-			increaseCurrency(enemy.bounty); // Increase currency when an enemy is defeated
+			increaseScore(Math.round(enemy.bounty)); // Increase score when an enemy is defeated
+			increaseCurrency(Math.round(enemy.bounty)); // Increase currency when an enemy is defeated
 			enemies.splice(index, 1);
 		}
 	});
 
 	if (addEnemy(deltaTime))
 	{
-		console.log("Spawned enemy");
+		// console.log("Spawned enemy");
 	}
 
 	if (showPathIndicator)
