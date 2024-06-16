@@ -79,10 +79,7 @@ export class IceProjectile extends Projectile
 		}
 		else
 		{
-			if (enemy.slowTimeout)
-			{
-				clearTimeout(enemy.slowTimeout);
-			}
+			clearTimeout(enemy.slowTimeout);
 			enemy.slowTimeout = setTimeout(() =>
 			{
 				enemy.speed /= slowAmount;

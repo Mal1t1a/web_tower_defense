@@ -1,5 +1,6 @@
 import { EventEmitter } from '../eventEmitter.js';
 import { particleExplosion, textParticle, showGlow, waveNumber } from '../gameState.js';
+import { RandomNumber } from '../utils.js';
 
 export class Enemy extends EventEmitter
 {
@@ -20,10 +21,27 @@ export class Enemy extends EventEmitter
 		this.maxHealth = 1 * waveNumber;
 		this.health = this.maxHealth;
 		this.bounty = bounty + (waveNumber - 1);
+
+		this.isSlowed = false;
+		this.isBurning = false;
+
+		this.burnTick = 0;
+		this.burnTickRate = 0.1;
 	}
 
 	move(deltaTime)
 	{
+		if (this.isBurning && this.burnTick > 0)
+		{
+			this.burnTick -= deltaTime;
+		}
+		else if (this.isBurning)
+		{
+			particleExplosion(this.x + RandomNumber(-2, 2), this.y + RandomNumber(-2, 2), { r: 255, g: 0, b: 0, a: 1}, 2);
+			particleExplosion(this.x + RandomNumber(-2, 2), this.y + RandomNumber(-2, 2), { r: 255, g: 155, b: 0, a: 1}, 2);
+			particleExplosion(this.x + RandomNumber(-2, 2), this.y + RandomNumber(-2, 2), { r: 255, g: 255, b: 0, a: 1}, 2);
+			this.burnTick = this.burnTickRate;
+		}
 		if (this.currentPoint < this.path.length - 1)
 		{
 			const target = this.path[this.currentPoint + 1];
